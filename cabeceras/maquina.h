@@ -1,0 +1,1 @@
+// Define el estado de la máquina: memoria, registros y tabla de segmentos. Inicializa y coordina la ejecución.

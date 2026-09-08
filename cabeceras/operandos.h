@@ -1,0 +1,1 @@
+// Obtiene el valor de un operando y guarda resultados en registros o memoria, según su tipo.

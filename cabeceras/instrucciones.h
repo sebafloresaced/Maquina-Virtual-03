@@ -1,0 +1,1 @@
+// Decodifica y ejecuta las instrucciones; actualiza los registros y flags que correspondan.

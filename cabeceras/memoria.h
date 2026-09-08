@@ -1,0 +1,1 @@
+// Traduce las direcciones según la segmentación y controla las lecturas y escrituras dentro de los límites válidos.
