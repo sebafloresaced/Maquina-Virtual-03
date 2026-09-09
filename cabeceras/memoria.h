@@ -2,4 +2,4 @@
 #include <stdint.h>
 #include "../cabeceras/maquina.h"
 
-uint32_t direccionFisica(MaquinaVirtual *, uint32_t, int);
+uint32_t DireccionFisica(MaquinaVirtual *, uint32_t, int);
