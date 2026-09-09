@@ -11,7 +11,7 @@ uint32_t DireccionFisica(MaquinaVirtual *maquina, uint32_t direccionLogica, uint
 
     DireccionFisica = base + offset;
 
-    if (DireccionFisica >= base && DireccionFisica+cant_bytes_acceso <= limite)
+    if (DireccionFisica >= base && DireccionFisica + cant_bytes_acceso <= limite)
         return DireccionFisica;
     else
         return 0; //esto es error
