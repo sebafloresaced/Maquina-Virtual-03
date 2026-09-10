@@ -1,5 +1,13 @@
 #include "../cabeceras/memoria.h"
 #include "../cabeceras/maquina.h"
+#include <stdio.h>
+
+static void actualizarRegistrosMemoria(MaquinaVirtual *maquina, uint32_t direccionLogica, uint32_t direccionFisica, uint32_t bytesAcceso, uint32_t valor) 
+{
+    maquina->registros[LAR] = direccionLogica;
+    maquina->registros[MAR] = (bytesAcceso << 16) | direccionFisica;
+    maquina->registros[MBR] = valor;
+}
 
 int DireccionFisica(MaquinaVirtual *maquina, uint32_t direccionLogica, uint32_t *direccionFisica, uint32_t bytesAcceso)
 {
@@ -21,7 +29,7 @@ int DireccionFisica(MaquinaVirtual *maquina, uint32_t direccionLogica, uint32_t 
     *direccionFisica = base + offset;
     limiteAcceso = *direccionFisica + bytesAcceso;
 
-    if (*direccionFisica >= base && limiteAcceso <= limiteSegmento)
+    if (*direccionFisica >= base && limiteAcceso <= limiteSegmento) 
         return 1;
     else
         return 0; // esto es error: no está en el segmento
@@ -31,9 +39,13 @@ uint32_t leerMemoria32(MaquinaVirtual *maquina, uint32_t direccionLogica)
 {
     uint32_t valor = 0;
     uint32_t direccionFisica;
+    int i;
 
-    if (DireccionFisica(maquina, direccionLogica, &direccionFisica, sizeof(uint32_t))) {
-        valor = maquina->memoria[direccionFisica];
+    if (DireccionFisica(maquina, direccionLogica, &direccionFisica, sizeof(uint32_t)) != 0) { // no da error
+        for (i = 0; i < 4; i++) { // leo cuatro bytes
+            valor = (valor << 8) | maquina->memoria[direccionFisica + i];
+        }
+        actualizarRegistrosMemoria(maquina,direccionLogica,direccionFisica,4,valor);
     }
 
     return valor;
@@ -42,8 +54,15 @@ uint32_t leerMemoria32(MaquinaVirtual *maquina, uint32_t direccionLogica)
 void escribeMemoria32(MaquinaVirtual *maquina, uint32_t direccionLogica, uint32_t valor)
 {
     uint32_t direccionFisica;
+    int i;
 
-    if (DireccionFisica(maquina, direccionLogica, &direccionFisica, sizeof(uint32_t))) {
-        maquina->memoria[direccionFisica] = valor;
+    if (DireccionFisica(maquina, direccionLogica, &direccionFisica, sizeof(uint32_t)) != 0) { // no da error
+        for (i = 0; i < 4; i++) { // escribo cuatro bytes
+            maquina->memoria[direccionFisica + i] = (valor >> (24 - 8 * i)) & 0xFF;
+        } 
+        actualizarRegistrosMemoria(maquina,direccionLogica,direccionFisica,4,valor);
+    }
+    else {
+        printf("Error");
     }
 }

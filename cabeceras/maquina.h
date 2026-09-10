@@ -4,7 +4,6 @@
 #define MAQUINA_H
 
 #include <stdint.h> // define tipos enteros de ancho fijo
-#include "operaciones.h"
 
 #define TAM_MEMORIA 16384 // 16 Kib
 #define CANT_REGISTROS 32
@@ -35,14 +34,16 @@ typedef struct {
     int16_t tamanio;
 } DescriptorSegmento;
 
+typedef struct MaquinaVirtual MaquinaVirtual;
+typedef uint32_t Operando;
+typedef void(*Operacion)(MaquinaVirtual *, Operando, Operando);
+
 struct MaquinaVirtual {
     uint8_t memoria[TAM_MEMORIA];
     uint32_t registros[CANT_REGISTROS];
     DescriptorSegmento segmentos[CANT_SEGMENTOS];
     Operacion Operaciones[CANT_OPERACIONES];
 };
-
-typedef struct MaquinaVirtual MaquinaVirtual;
 
 void inicializarMaquina(MaquinaVirtual *maquina);
 
