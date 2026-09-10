@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "maquina.h"
+#include "../cabeceras/maquina.h"
 
 int main(void){
     MaquinaVirtual maquina;
