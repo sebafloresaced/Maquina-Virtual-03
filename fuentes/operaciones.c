@@ -80,3 +80,133 @@ void add(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
 
     escribirValor(maquina, OPA, resultado);
 }
+
+void sub(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+
+}
+
+void mul(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void div(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void cmp(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void and(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void or(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void xor(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void swap(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void shl(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void shr(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void sar(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void ldl(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void ldh(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void rnd(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void sys(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void jmp(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void jp(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void jn(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void jz(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void jc(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void jv(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void jnp(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void jnn(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void jnz(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void not(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
+
+void stop(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+{
+    
+}
