@@ -4,7 +4,8 @@
 #define OPERACIONES_H
 
 #include <stdint.h>
-#include "../cabeceras/maquina.h"
+#include "maquina.h"
+#include "memoria.h"
 
 typedef uint32_t Operando;
 typedef void(*Operacion)(MaquinaVirtual *, Operando, Operando);
