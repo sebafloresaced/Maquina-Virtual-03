@@ -1,9 +1,10 @@
 #include "../cabeceras/memoria.h"
 #include "../cabeceras/maquina.h"
 
-uint32_t DireccionFisica(MaquinaVirtual *maquina, uint32_t direccionLogica, uint32_t cant_bytes_acceso){
+int DireccionFisica(MaquinaVirtual *maquina, uint32_t direccionLogica, uint32_t *direccionFisica)
+{
     uint16_t offset, segmento;
-    uint32_t DireccionFisica, limiteSegmento, limiteAcceso, base;
+    uint32_t limiteSegmento, limiteAcceso, base;
 
     segmento = direccionLogica >> 16;
     
@@ -17,11 +18,32 @@ uint32_t DireccionFisica(MaquinaVirtual *maquina, uint32_t direccionLogica, uint
     limiteSegmento = maquina->segmentos[segmento].tamanio + base;
     offset = direccionLogica & 0x0000FFFF;
 
-    DireccionFisica = base + offset;
-    limiteAcceso = DireccionFisica + cant_bytes_acceso;
+    *direccionFisica = base + offset;
+    limiteAcceso = *direccionFisica + sizeof(uint32_t);
 
-    if (DireccionFisica < base ||  limiteAcceso > limiteSegmento) // fuera del segmento
-        return 0;
+    if (*direccionFisica >= base && limiteAcceso <= limiteSegmento)
+        return 1;
+    else
+        return 0; // esto es error: no está en el segmento
+}
 
-    return DireccionFisica;
+uint32_t leerMemoria32(MaquinaVirtual *maquina, uint32_t direccionLogica)
+{
+    uint32_t valor = 0;
+    uint32_t direccionFisica;
+
+    if (DireccionFisica(maquina, direccionLogica, &direccionFisica)) {
+        valor = maquina->memoria[direccionFisica];
+    }
+
+    return valor;
+}
+
+void escribeMemoria32(MaquinaVirtual *maquina, uint32_t direccionLogica, uint32_t valor)
+{
+    uint32_t direccionFisica;
+
+    if (DireccionFisica(maquina, direccionLogica, &direccionFisica)) {
+        maquina->memoria[direccionFisica] = valor;
+    }
 }

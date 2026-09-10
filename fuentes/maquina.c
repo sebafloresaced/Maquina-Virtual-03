@@ -12,4 +12,9 @@ void inicializarMaquina(MaquinaVirtual *maquina) {
         maquina->segmentos[i].base = -1;
         maquina->segmentos[i].tamanio = -1;
     }
+
+    // operaciones
+
+    maquina->Operaciones[MOV] = mov;
+    maquina->Operaciones[ADD] = add;
 }

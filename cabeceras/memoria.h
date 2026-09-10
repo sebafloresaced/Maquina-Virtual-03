@@ -1,5 +1,13 @@
-// Traduce las direcciones logicas según la segmentación y controla las lecturas y escrituras dentro de los límites válidos, retorna una direccion fisica VALIDA.
-#include <stdint.h>
-#include "../cabeceras/maquina.h"
+// Traduce las direcciones logicas según la segmentación y controla las lecturas y escrituras dentro de los límites válidos.
 
-uint32_t DireccionFisica(MaquinaVirtual *, uint32_t, uint32_t);
+#ifndef MEMORIA_H
+#define MEMORIA_H
+
+#include <stdint.h>
+#include "maquina.h"
+
+int DireccionFisica(MaquinaVirtual *, uint32_t, uint32_t *);
+uint32_t leerMemoria32(MaquinaVirtual *, uint32_t);
+void escribeMemoria32(MaquinaVirtual *, uint32_t, uint32_t);
+
+#endif
