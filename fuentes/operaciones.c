@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "../cabeceras/operaciones.h"
 #include "../cabeceras/memoria.h"
-#include "../cabeceras/maquina.h"
 
 uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
 {
