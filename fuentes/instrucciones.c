@@ -30,8 +30,8 @@ static int leerOperandos(MaquinaVirtual *maquina, int desplazamiento) {
     uint8_t bytes[6] = {0};
     uint32_t direccionFisica;
     int i;
-    direccionFisica = DireccionFisica(maquina, maquina->registros[IP], desplazamiento + 1);
-    if (direccionFisica == 0) // si la funcion direccion fisica da error
+    i = DireccionFisica(maquina, maquina->registros[IP], &direccionFisica, desplazamiento + 1);
+    if (i == 0) // si la funcion direccion fisica da error
         return 0;
     else {
         for (i = 0; i < desplazamiento; i++) {
