@@ -1,0 +1,35 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: gcc compilar archivo activo",
+            "command": "/usr/bin/gcc",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-I${workspaceFolder}/cabeceras",
+                "${workspaceFolder}/fuentes/cargador.c",
+                "${workspaceFolder}/fuentes/instrucciones.c",
+                "${workspaceFolder}/fuentes/llamadas_sistema.c",
+                "${workspaceFolder}/fuentes/main.c",
+                "${workspaceFolder}/fuentes/maquina.c",
+                "${workspaceFolder}/fuentes/memoria.c",
+                "${workspaceFolder}/fuentes/operaciones.c",
+                "-o",
+                "${workspaceFolder}/maquina-debug"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Tarea generada por el depurador."
+        }
+    ],
+    "version": "2.0.0"
+}

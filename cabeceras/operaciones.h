@@ -56,5 +56,24 @@ void cmp(MaquinaVirtual *, uint32_t, uint32_t);
 void and(MaquinaVirtual *, uint32_t, uint32_t);
 void or(MaquinaVirtual *, uint32_t, uint32_t);
 void xor(MaquinaVirtual *, uint32_t, uint32_t);
+void swap(MaquinaVirtual *, uint32_t, uint32_t);
+void shl(MaquinaVirtual *, uint32_t, uint32_t);
+void shr(MaquinaVirtual *, uint32_t, uint32_t);
+void sar(MaquinaVirtual *, uint32_t, uint32_t);
+void ldl(MaquinaVirtual *, uint32_t, uint32_t);
+void ldh(MaquinaVirtual *, uint32_t, uint32_t);
+void rnd(MaquinaVirtual *, uint32_t, uint32_t);
+void sys(MaquinaVirtual *, uint32_t, uint32_t);
+void jmp(MaquinaVirtual *, uint32_t, uint32_t);
+void jp(MaquinaVirtual *, uint32_t, uint32_t);
+void jn(MaquinaVirtual *, uint32_t, uint32_t);
+void jz(MaquinaVirtual *, uint32_t, uint32_t);
+void jc(MaquinaVirtual *, uint32_t, uint32_t);
+void jv(MaquinaVirtual *, uint32_t, uint32_t);
+void jnp(MaquinaVirtual *, uint32_t, uint32_t);
+void jnn(MaquinaVirtual *, uint32_t, uint32_t);
+void jnz(MaquinaVirtual *, uint32_t, uint32_t);
+void not(MaquinaVirtual *, uint32_t, uint32_t);
+void stop(MaquinaVirtual *, uint32_t, uint32_t);
 
 #endif
