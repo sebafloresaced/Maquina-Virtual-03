@@ -1,12 +1,19 @@
 // Se encarga de recibir los operandos y realizar la operacion correspondiente
 
+#ifndef OPERACIONES_H
+#define OPERACIONES_H
+
+#include <stdint.h>
 #include "maquina.h"
 
+typedef uint32_t Operando;
+typedef void(*Operacion)(MaquinaVirtual *, Operando, Operando);
+
 //tipos de operando
-#define NINGUNO 0
-#define REGISTRO 1
-#define INMEDIATO 2
-#define MEMORIA 3
+#define NINGUNO 0x00
+#define REGISTRO 0x01
+#define INMEDIATO 0x10
+#define MEMORIA 0x11
 
 //operaciones
 #define MOV 0x10
@@ -40,9 +47,8 @@
 
 #define STOP 0x0F
 
-typedef uint32_t Operando;
-
-typedef void(*Operacion)(MaquinaVirtual, Operando, Operando);
+uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op);
+void escribirValor(MaquinaVirtual *maquina, Operando op, uint32_t valor);
 
 void mov(MaquinaVirtual *, uint32_t, uint32_t);
 void add(MaquinaVirtual *, uint32_t, uint32_t);
@@ -53,3 +59,5 @@ void cmp(MaquinaVirtual *, uint32_t, uint32_t);
 void and(MaquinaVirtual *, uint32_t, uint32_t);
 void or(MaquinaVirtual *, uint32_t, uint32_t);
 void xor(MaquinaVirtual *, uint32_t, uint32_t);
+
+#endif

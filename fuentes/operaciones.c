@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "operaciones.h"
 #include "memoria.h"
+#include "maquina.h"
 
 uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
 {
@@ -23,13 +24,13 @@ uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
         case MEMORIA:
         {
             int16_t offset = (op >> 8) & 0xFFFF;
-            uint8_t registro = op & 0x1;
+            uint8_t registro = op & 0x1F;
 
             uint32_t direccionLogica = maquina->registros[registro] + offset; //direccion donde apunta el registro + el desplazamiento
 
             // acá leerías memoria
 
-            return leerMemoria(maquina, direccionLogica);
+            return leerMemoria32(maquina, direccionLogica);
         }
 
         default:
@@ -53,7 +54,7 @@ void escribirValor(MaquinaVirtual *maquina, Operando op, uint32_t valor)
         case MEMORIA:
         {
             int16_t offset = (op >> 8) & 0xFFFF;
-            uint8_t registro = op & 0x1;
+            uint8_t registro = op & 0x1F;
 
             uint32_t direccionLogica = maquina->registros[registro] + offset;
             
