@@ -11,10 +11,10 @@ typedef uint32_t Operando;
 typedef void(*Operacion)(MaquinaVirtual *, Operando, Operando);
 
 //tipos de operando
-#define NINGUNO 0x00
-#define REGISTRO 0x01
-#define INMEDIATO 0x10
-#define MEMORIA 0x11
+#define NINGUNO 0
+#define REGISTRO 1
+#define INMEDIATO 2
+#define MEMORIA 3
 
 //operaciones
 #define MOV 0x10
