@@ -30,7 +30,7 @@ int cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina) {
   FILE *archivo;
   int tamanioCodigo;
 
-  archivo = fopen(nombreArchivo, add"rb");
+  archivo = fopen(nombreArchivo, "rb");
   if (archivo == NULL) {
     printf("No se pudo abrir el archivo\n");
     return 0;

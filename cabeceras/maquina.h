@@ -44,8 +44,6 @@ struct MaquinaVirtual {
 
 typedef struct MaquinaVirtual MaquinaVirtual;
 
-typedef void (*Operacion)(MaquinaVirtual *, uint32_t, uint32_t);
-
 void inicializarMaquina(MaquinaVirtual *maquina);
 
 #endif
