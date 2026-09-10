@@ -5,6 +5,7 @@
 
 #include <stdint.h>
 #include "maquina.h"
+#include "memoria.h"
 
 typedef uint32_t Operando;
 typedef void(*Operacion)(MaquinaVirtual *, Operando, Operando);
