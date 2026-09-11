@@ -24,7 +24,7 @@ uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
         {
             int16_t offset = (op >> 8) & 0xFFFF;
             uint8_t registro = op & 0x1F;
-            int16_t bytesAleer = sizeof(uint32_t); // 4 bytes a leer
+            uint16_t bytesAleer = sizeof(uint32_t); // 4 bytes a leer
 
             uint32_t direccionLogica = maquina->registros[registro] + offset; //direccion donde apunta el registro + el desplazamiento
 
@@ -41,7 +41,7 @@ uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
     }
 }
 
-void escribirValor(MaquinaVirtual *maquina, Operando op, uint32_t valor)
+void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
 { 
     uint32_t tipo = op >> 24;
 
@@ -58,7 +58,7 @@ void escribirValor(MaquinaVirtual *maquina, Operando op, uint32_t valor)
         {
             int16_t offset = (op >> 8) & 0xFFFF;
             uint8_t registro = op & 0x1F;
-            int16_t bytesAescribir = sizeof(uint32_t); // 4 bytes a escribir
+            uint16_t bytesAescribir = sizeof(uint32_t); // 4 bytes a escribir
 
             uint32_t direccionLogica = maquina->registros[registro] + offset;
             
@@ -100,7 +100,7 @@ void mul(MaquinaVirtual *maquina)
     
 }
 
-void div(MaquinaVirtual *maquina)
+void divi(MaquinaVirtual *maquina)
 {
     
 }
@@ -176,7 +176,7 @@ void jp(MaquinaVirtual *maquina)
     
 }
 
-void jn(MaquinaVirtual *maquina)
+void jN(MaquinaVirtual *maquina)
 {
     
 }

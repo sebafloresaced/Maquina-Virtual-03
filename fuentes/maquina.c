@@ -19,7 +19,7 @@ void inicializarMaquina(MaquinaVirtual *maquina) {
     maquina->Operaciones[ADD] = add;
     maquina->Operaciones[SUB] = sub;
     maquina->Operaciones[MUL] = mul;
-    maquina->Operaciones[DIV] = div;
+    maquina->Operaciones[DIV] = divi;
     maquina->Operaciones[CMP] = cmp;
     maquina->Operaciones[AND] = and;
     maquina->Operaciones[OR] = or;
@@ -35,7 +35,7 @@ void inicializarMaquina(MaquinaVirtual *maquina) {
     maquina->Operaciones[SYS] = sys;
     maquina->Operaciones[JMP] = jmp;
     maquina->Operaciones[JP] = jp;
-    maquina->Operaciones[JN] = jn;
+    maquina->Operaciones[JN] = jN;
     maquina->Operaciones[JZ] = jz;
     maquina->Operaciones[JC] = jc;
     maquina->Operaciones[JV] = jv;

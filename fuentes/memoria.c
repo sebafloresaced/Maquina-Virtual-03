@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void verificaDirFisica(MaquinaVirtual *maquina, uint32_t direccionLogica, uint32_t *direccionFisica, int16_t bytesAcceso)
+void verificaDirFisica(MaquinaVirtual *maquina, uint32_t direccionLogica, uint32_t *direccionFisica, uint16_t bytesAcceso)
 {
     uint16_t offset, segmento;
     uint32_t limiteSegmento, limiteAcceso, base;
@@ -37,10 +37,12 @@ void leerMemoria(MaquinaVirtual *maquina)
 {
     int32_t valor;
     uint32_t direccionFisica;
-    int16_t bytesAcceso = (maquina->registros[MAR] >> 16) & 0xFF;
+    uint16_t bytesAcceso = (maquina->registros[MAR] >> 16);
     int i;
 
     verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, bytesAcceso);
+
+    maquina->registros[MAR] = (maquina->registros[MAR] | direccionFisica);
     
     for (i = 0; i < bytesAcceso; i++) { // leo tantos bytes como indique el registro MAR
         valor = (valor << 8) | maquina->memoria[direccionFisica + i];
@@ -53,7 +55,7 @@ void leerMemoria(MaquinaVirtual *maquina)
 void escribeMemoria(MaquinaVirtual *maquina)
 {
     uint32_t direccionFisica;
-    int16_t bytesAcceso = (maquina->registros[MAR] >> 16) & 0xFF;
+    uint16_t bytesAcceso = (maquina->registros[MAR] >> 16);
     int i;
 
     verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, bytesAcceso);
