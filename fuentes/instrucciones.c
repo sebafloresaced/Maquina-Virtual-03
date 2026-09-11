@@ -26,21 +26,19 @@ static void cargarOperandos(MaquinaVirtual *maquina, uint8_t bytes[]) {
     maquina->registros[OP2] |= valorB;
 }
 
-static int leerOperandos(MaquinaVirtual *maquina, int desplazamiento) {
+static void leerOperandos(MaquinaVirtual *maquina, int desplazamiento) {
     uint8_t bytes[6] = {0};
     uint32_t direccionFisica;
     int i;
-    i = DireccionFisica(maquina, maquina->registros[IP], &direccionFisica, desplazamiento + 1);
-    if (i == 0) // si la funcion direccion fisica da error
-        return 0;
-    else {
-        for (i = 0; i < desplazamiento; i++) {
-            bytes[i] = maquina->memoria[direccionFisica + i + 1];
-        }
-        cargarOperandos(maquina, bytes);
-        return 1;
+    verificaDirFisica(maquina, maquina->registros[IP], &direccionFisica, desplazamiento + 1);
+
+    for (i = 0; i < desplazamiento; i++) {
+        bytes[i] = maquina->memoria[direccionFisica + i + 1];
     }
+    
+    cargarOperandos(maquina, bytes);
 }
+
 
 int desensamblaInstruccion(MaquinaVirtual *maquina, uint8_t instruccion){ // devuelve el tamanio total de la instruccion, o -1 si falla la lectura
     uint8_t OPA, OPB, OPERACION;
@@ -61,8 +59,5 @@ int desensamblaInstruccion(MaquinaVirtual *maquina, uint8_t instruccion){ // dev
     OPERACION = instruccion & 0x1F;
     maquina->registros[OPC] = OPERACION;
 
-    if (!leerOperandos(maquina, desplazamiento))
-        return -1;
-    else
-        return 1 + desplazamiento;
+    return 1 + desplazamiento;
 }
