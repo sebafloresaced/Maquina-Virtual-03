@@ -2,7 +2,7 @@
 #include "../cabeceras/operaciones.h"
 #include "../cabeceras/memoria.h"
 
-uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
+static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
 {
     uint8_t tipo = op >> 24;
 
@@ -41,7 +41,7 @@ uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
     }
 }
 
-void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
+static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
 { 
     uint32_t tipo = op >> 24;
 

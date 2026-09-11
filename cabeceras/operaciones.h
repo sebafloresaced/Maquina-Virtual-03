@@ -46,8 +46,8 @@
 
 typedef uint32_t Operando;
 
-uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op);
-void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor);
+static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op);
+static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor);
 
 void mov(MaquinaVirtual *);
 void add(MaquinaVirtual *);
