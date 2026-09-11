@@ -69,149 +69,150 @@ void escribirValor(MaquinaVirtual *maquina, Operando op, uint32_t valor)
 }
 
 
-void mov(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void mov(MaquinaVirtual *maquina)
 {
-    uint32_t valor = obtenerValor(maquina, OPB);
+    uint32_t valor = obtenerValor(maquina, maquina->registros[OP2]);
 
-    escribirValor(maquina, OPA, valor);
+    escribirValor(maquina, maquina->registros[OP1], valor);
 }
 
-void add(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void add(MaquinaVirtual *maquina)
 {
-    uint32_t valorDestino = obtenerValor(maquina, OPB);
-    uint32_t valorOrigen  = obtenerValor(maquina, OPA);
+    uint32_t valorDestino = obtenerValor(maquina, maquina->registros[OP2]);
+    uint32_t valorOrigen  = obtenerValor(maquina, maquina->registros[OP1]);
 
     uint32_t resultado = valorDestino + valorOrigen;
 
-    escribirValor(maquina, OPA, resultado);
+    escribirValor(maquina, maquina->registros[OP1], resultado);
 }
 
-void sub(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void sub(MaquinaVirtual *maquina)
 {
 
 }
 
-void mul(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
-{
-    
-}
-
-void div(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void mul(MaquinaVirtual *maquina)
 {
     
 }
 
-void cmp(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void div(MaquinaVirtual *maquina)
 {
     
 }
 
-void and(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void cmp(MaquinaVirtual *maquina)
 {
     
 }
 
-void or(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void and(MaquinaVirtual *maquina)
 {
     
 }
 
-void xor(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void or(MaquinaVirtual *maquina)
 {
     
 }
 
-void swap(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void xor(MaquinaVirtual *maquina)
 {
     
 }
 
-void shl(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void swap(MaquinaVirtual *maquina)
 {
     
 }
 
-void shr(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void shl(MaquinaVirtual *maquina)
 {
     
 }
 
-void sar(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+
+void shr(MaquinaVirtual *maquina)
 {
     
 }
 
-void ldl(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void sar(MaquinaVirtual *maquina)
 {
     
 }
 
-void ldh(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void ldl(MaquinaVirtual *maquina)
 {
     
 }
 
-void rnd(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void ldh(MaquinaVirtual *maquina)
 {
     
 }
 
-void sys(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void rnd(MaquinaVirtual *maquina)
 {
     
 }
 
-void jmp(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void sys(MaquinaVirtual *maquina)
 {
     
 }
 
-void jp(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void jmp(MaquinaVirtual *maquina)
 {
     
 }
 
-void jn(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void jp(MaquinaVirtual *maquina)
 {
     
 }
 
-void jz(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void jn(MaquinaVirtual *maquina)
 {
     
 }
 
-void jc(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void jz(MaquinaVirtual *maquina)
 {
     
 }
 
-void jv(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void jc(MaquinaVirtual *maquina)
 {
     
 }
 
-void jnp(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void jv(MaquinaVirtual *maquina)
 {
     
 }
 
-void jnn(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void jnp(MaquinaVirtual *maquina)
 {
     
 }
 
-void jnz(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void jnn(MaquinaVirtual *maquina)
 {
     
 }
 
-void not(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void jnz(MaquinaVirtual *maquina)
 {
     
 }
 
-void stop(MaquinaVirtual *maquina, Operando OPA, Operando OPB)
+void not(MaquinaVirtual *maquina)
+{
+    
+}
+
+void stop(MaquinaVirtual *maquina)
 {
     
 }

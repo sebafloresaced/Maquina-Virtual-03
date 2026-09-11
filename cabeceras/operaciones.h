@@ -44,36 +44,38 @@
 
 #define STOP 0x0F
 
+typedef uint32_t Operando;
+
 uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op);
 void escribirValor(MaquinaVirtual *maquina, Operando op, uint32_t valor);
 
-void mov(MaquinaVirtual *, uint32_t, uint32_t);
-void add(MaquinaVirtual *, uint32_t, uint32_t);
-void sub(MaquinaVirtual *, uint32_t, uint32_t);
-void mul(MaquinaVirtual *, uint32_t, uint32_t);
-void div(MaquinaVirtual *, uint32_t, uint32_t);
-void cmp(MaquinaVirtual *, uint32_t, uint32_t);
-void and(MaquinaVirtual *, uint32_t, uint32_t);
-void or(MaquinaVirtual *, uint32_t, uint32_t);
-void xor(MaquinaVirtual *, uint32_t, uint32_t);
-void swap(MaquinaVirtual *, uint32_t, uint32_t);
-void shl(MaquinaVirtual *, uint32_t, uint32_t);
-void shr(MaquinaVirtual *, uint32_t, uint32_t);
-void sar(MaquinaVirtual *, uint32_t, uint32_t);
-void ldl(MaquinaVirtual *, uint32_t, uint32_t);
-void ldh(MaquinaVirtual *, uint32_t, uint32_t);
-void rnd(MaquinaVirtual *, uint32_t, uint32_t);
-void sys(MaquinaVirtual *, uint32_t, uint32_t);
-void jmp(MaquinaVirtual *, uint32_t, uint32_t);
-void jp(MaquinaVirtual *, uint32_t, uint32_t);
-void jn(MaquinaVirtual *, uint32_t, uint32_t);
-void jz(MaquinaVirtual *, uint32_t, uint32_t);
-void jc(MaquinaVirtual *, uint32_t, uint32_t);
-void jv(MaquinaVirtual *, uint32_t, uint32_t);
-void jnp(MaquinaVirtual *, uint32_t, uint32_t);
-void jnn(MaquinaVirtual *, uint32_t, uint32_t);
-void jnz(MaquinaVirtual *, uint32_t, uint32_t);
-void not(MaquinaVirtual *, uint32_t, uint32_t);
-void stop(MaquinaVirtual *, uint32_t, uint32_t);
+void mov(MaquinaVirtual *);
+void add(MaquinaVirtual *);
+void sub(MaquinaVirtual *);
+void mul(MaquinaVirtual *);
+void div(MaquinaVirtual *);
+void cmp(MaquinaVirtual *);
+void and(MaquinaVirtual *);
+void or(MaquinaVirtual *);
+void xor(MaquinaVirtual *);
+void swap(MaquinaVirtual *);
+void shl(MaquinaVirtual *);
+void shr(MaquinaVirtual *);
+void sar(MaquinaVirtual *);
+void ldl(MaquinaVirtual *);
+void ldh(MaquinaVirtual *);
+void rnd(MaquinaVirtual *);
+void sys(MaquinaVirtual *);
+void jmp(MaquinaVirtual *);
+void jp(MaquinaVirtual *);
+void jn(MaquinaVirtual *);
+void jz(MaquinaVirtual *);
+void jc(MaquinaVirtual *);
+void jv(MaquinaVirtual *);
+void jnp(MaquinaVirtual *);
+void jnn(MaquinaVirtual *);
+void jnz(MaquinaVirtual *);
+void not(MaquinaVirtual *);
+void stop(MaquinaVirtual *);
 
 #endif
