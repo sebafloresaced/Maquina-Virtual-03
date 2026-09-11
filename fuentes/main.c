@@ -14,7 +14,7 @@ int main(void){
 
     printf("Valor en EAX: %d\n", maquina.registros[EAX]);
 
-    maquina.Operaciones[MOV](&maquina, maquina.registros[OP1], maquina.registros[OP2]);
+    maquina.Operaciones[MOV](&maquina);
 
     maquina.registros[OP1] = 0x0100000A; // Registro EAX 10
     maquina.registros[OP2] = 0x02000002; // inmediato 2
@@ -23,7 +23,7 @@ int main(void){
 
     printf("Valor en EAX después de MOV: %d\n", maquina.registros[EAX]);
 
-    maquina.Operaciones[ADD](&maquina, maquina.registros[OP1], maquina.registros[OP2]);
+    maquina.Operaciones[ADD](&maquina);
 
     printf("Valor en EAX después de ADD: %d\n", maquina.registros[EAX]);
 

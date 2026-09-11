@@ -8,7 +8,7 @@
 #define TAM_MEMORIA 16384 // 16 Kib
 #define CANT_REGISTROS 32
 #define CANT_SEGMENTOS 8
-#define CANT_OPERACIONES 256
+#define CANT_OPERACIONES 32
 
 // Indices de los registros
 #define IP   0
@@ -35,8 +35,8 @@ typedef struct {
 } DescriptorSegmento;
 
 typedef struct MaquinaVirtual MaquinaVirtual;
-typedef uint32_t Operando;
-typedef void(*Operacion)(MaquinaVirtual *, Operando, Operando);
+
+typedef void(*Operacion)(MaquinaVirtual *);
 
 struct MaquinaVirtual {
     uint8_t memoria[TAM_MEMORIA];
