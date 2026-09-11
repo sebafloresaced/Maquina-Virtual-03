@@ -116,13 +116,18 @@ void div(MaquinaVirtual *maquina)
 {
     uint32_t valor1 = obtenerValor(maquina, maquina->registros[OP1]);
     uint32_t valor2  = obtenerValor(maquina, maquina->registros[OP2]);
+    
+    if (valor2 != 0) {
+        uint32_t resultado = valor1 / valor2;
+        uint32_t resto = valor1 % valor2;
 
-    uint32_t resultado = valor1 / valor2;
-    uint32_t resto = valor1 % valor2;
-
-    actualizarCC(maquina, resultado);
-    escribirValor(maquina, maquina->registros[OP1], resultado);
-    escribirValor(maquina, maquina->registros[AC], resto);
+        actualizarCC(maquina, resultado);
+        escribirValor(maquina, maquina->registros[OP1], resultado);
+        escribirValor(maquina, maquina->registros[AC], resto);
+    }
+    else {
+        stop(maquina);
+    }
 }
 
 void cmp(MaquinaVirtual *maquina)
