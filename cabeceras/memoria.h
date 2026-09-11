@@ -7,7 +7,7 @@
 #include "maquina.h"
 
 int DireccionFisica(MaquinaVirtual *, uint32_t, uint32_t *, uint32_t);
-uint32_t leerMemoria32(MaquinaVirtual *, uint32_t);
-void escribeMemoria32(MaquinaVirtual *, uint32_t, uint32_t);
+void leerMemoria32(MaquinaVirtual *);
+void escribeMemoria32(MaquinaVirtual *);
 
 #endif
