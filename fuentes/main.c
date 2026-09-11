@@ -1,10 +1,15 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "../cabeceras/maquina.h"
 #include "../cabeceras/operaciones.h"
 
 
 int main(void){
     MaquinaVirtual maquina;
+
+    srand((unsigned int)time(NULL)); // para el RND
+
     inicializarMaquina(&maquina);
 
     maquina.registros[OP1] = 0x0100000A; // Registro EAX 10
