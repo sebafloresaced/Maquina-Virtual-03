@@ -24,14 +24,16 @@ uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
         {
             int16_t offset = (op >> 8) & 0xFFFF;
             uint8_t registro = op & 0x1F;
+            int16_t bytesAleer = sizeof(uint32_t); // 4 bytes a leer
 
             uint32_t direccionLogica = maquina->registros[registro] + offset; //direccion donde apunta el registro + el desplazamiento
 
+            maquina->registros[MAR] = bytesAleer << 16;
             maquina->registros[LAR] = direccionLogica;
             
-            leerMemoria32(maquina);
+            leerMemoria(maquina);
 
-            break;
+            return maquina->registros[MBR];
         }
 
         default:
@@ -56,13 +58,15 @@ void escribirValor(MaquinaVirtual *maquina, Operando op, uint32_t valor)
         {
             int16_t offset = (op >> 8) & 0xFFFF;
             uint8_t registro = op & 0x1F;
+            int16_t bytesAescribir = sizeof(uint32_t); // 4 bytes a escribir
 
             uint32_t direccionLogica = maquina->registros[registro] + offset;
             
+            maquina->registros[MAR] = bytesAescribir << 16;
             maquina->registros[LAR] = direccionLogica;
             maquina->registros[MBR] = valor;
 
-            escribeMemoria32(maquina);
+            escribeMemoria(maquina); //escribir 4 bytes de memoria desde MBR
             break;
         }
     }

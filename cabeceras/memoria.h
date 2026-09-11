@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include "maquina.h"
 
-int DireccionFisica(MaquinaVirtual *, uint32_t, uint32_t *, uint32_t);
+int DireccionFisica(MaquinaVirtual *);
 void leerMemoria32(MaquinaVirtual *);
 void escribeMemoria32(MaquinaVirtual *);
 
