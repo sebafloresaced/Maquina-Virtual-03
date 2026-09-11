@@ -27,9 +27,11 @@ uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
 
             uint32_t direccionLogica = maquina->registros[registro] + offset; //direccion donde apunta el registro + el desplazamiento
 
-            // acá leerías memoria
+            maquina->registros[LAR] = direccionLogica;
+            
+            leerMemoria32(maquina);
 
-            return leerMemoria32(maquina, direccionLogica);
+            break;
         }
 
         default:
@@ -57,7 +59,10 @@ void escribirValor(MaquinaVirtual *maquina, Operando op, uint32_t valor)
 
             uint32_t direccionLogica = maquina->registros[registro] + offset;
             
-            escribeMemoria32(maquina, direccionLogica, valor);
+            maquina->registros[LAR] = direccionLogica;
+            maquina->registros[MBR] = valor;
+
+            escribeMemoria32(maquina);
             break;
         }
     }
