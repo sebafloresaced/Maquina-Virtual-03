@@ -59,8 +59,5 @@ void desensamblaInstruccion(MaquinaVirtual *maquina, uint8_t instruccion, int *d
 
     OPERACION = instruccion & 0x1F;
     maquina->registros[OPC] = OPERACION;
-
-    if (OPERACION == STOP)
-        maquina->registros[IP] = -1;
-
+    
 }
