@@ -46,14 +46,14 @@
 
 typedef uint32_t Operando;
 
-uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op);
-void escribirValor(MaquinaVirtual *maquina, Operando op, uint32_t valor);
+static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op);
+static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor);
 
 void mov(MaquinaVirtual *);
 void add(MaquinaVirtual *);
 void sub(MaquinaVirtual *);
 void mul(MaquinaVirtual *);
-void div(MaquinaVirtual *);
+void divi(MaquinaVirtual *);
 void cmp(MaquinaVirtual *);
 void and(MaquinaVirtual *);
 void or(MaquinaVirtual *);
@@ -68,7 +68,7 @@ void rnd(MaquinaVirtual *);
 void sys(MaquinaVirtual *);
 void jmp(MaquinaVirtual *);
 void jp(MaquinaVirtual *);
-void jn(MaquinaVirtual *);
+void jN(MaquinaVirtual *);
 void jz(MaquinaVirtual *);
 void jc(MaquinaVirtual *);
 void jv(MaquinaVirtual *);
