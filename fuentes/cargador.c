@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "../cabeceras/cargador.h"
 
-static void leerEncabezado(FILE *archivo) {
+static int leerEncabezado(FILE *archivo) {
   uint8_t encabezado[8];
   int tamanioCodigo;
 

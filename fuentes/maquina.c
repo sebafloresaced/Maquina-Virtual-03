@@ -11,6 +11,9 @@ void inicializarMaquina(MaquinaVirtual *maquina) {
         maquina->segmentos[i].base = -1;
         maquina->segmentos[i].tamanio = -1;
     }
+    for (i = 0; i < CANT_OPERACIONES; i++) {
+        maquina->Operaciones[i] = NULL;
+    }
 
     // operaciones
     maquina->Operaciones[MOV] = operacionMOV;
