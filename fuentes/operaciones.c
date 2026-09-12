@@ -3,7 +3,7 @@
 #include "../cabeceras/operaciones.h"
 #include "../cabeceras/memoria.h"
 
-uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
+static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
 {
     uint8_t tipo = op >> 24;
 
@@ -25,12 +25,15 @@ uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
         {
             int16_t offset = (op >> 8) & 0xFFFF;
             uint8_t registro = op & 0x1F;
+            uint16_t bytesAleer = sizeof(uint32_t); // 4 bytes a leer
 
             uint32_t direccionLogica = maquina->registros[registro] + offset; //direccion donde apunta el registro + el desplazamiento
 
+            maquina->registros[MAR] = bytesAleer << 16;
             maquina->registros[LAR] = direccionLogica;
             
-            leerMemoria32(maquina);
+            leerMemoria(maquina);
+
             return maquina->registros[MBR];
         }
 
@@ -39,7 +42,7 @@ uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
     }
 }
 
-void escribirValor(MaquinaVirtual *maquina, Operando op, uint32_t valor)
+static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
 { 
     uint32_t tipo = op >> 24;
 
@@ -56,13 +59,15 @@ void escribirValor(MaquinaVirtual *maquina, Operando op, uint32_t valor)
         {
             int16_t offset = (op >> 8) & 0xFFFF;
             uint8_t registro = op & 0x1F;
+            uint16_t bytesAescribir = sizeof(uint32_t); // 4 bytes a escribir
 
             uint32_t direccionLogica = maquina->registros[registro] + offset;
             
+            maquina->registros[MAR] = bytesAescribir << 16;
             maquina->registros[LAR] = direccionLogica;
             maquina->registros[MBR] = valor;
 
-            escribeMemoria32(maquina);
+            escribeMemoria(maquina); //escribir 4 bytes de memoria desde MBR
             break;
         }
     }
@@ -112,7 +117,7 @@ void mul(MaquinaVirtual *maquina)
     escribirValor(maquina, maquina->registros[OP1], resultado);
 }
 
-void div(MaquinaVirtual *maquina)
+void divi(MaquinaVirtual *maquina)
 {
     uint32_t valor1 = obtenerValor(maquina, maquina->registros[OP1]);
     uint32_t valor2  = obtenerValor(maquina, maquina->registros[OP2]);
@@ -271,7 +276,7 @@ void jp(MaquinaVirtual *maquina)
         maquina->registros[IP] = valor;
 }
 
-void jn(MaquinaVirtual *maquina)
+void jN(MaquinaVirtual *maquina)
 {
     uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
 
