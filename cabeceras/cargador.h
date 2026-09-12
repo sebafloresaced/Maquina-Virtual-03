@@ -5,6 +5,6 @@
 
 #include "maquina.h"
 
-int cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina);
+void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina);
 
 #endif
