@@ -40,7 +40,7 @@ typedef void(*Operacion)(MaquinaVirtual *);
 
 struct MaquinaVirtual {
     uint8_t memoria[TAM_MEMORIA];
-    uint32_t registros[CANT_REGISTROS];
+    int32_t registros[CANT_REGISTROS];
     DescriptorSegmento segmentos[CANT_SEGMENTOS];
     Operacion Operaciones[CANT_OPERACIONES];
 };
