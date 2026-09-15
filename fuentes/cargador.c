@@ -22,6 +22,8 @@ static int leerEncabezado(FILE *archivo) {
     exit(EXIT_FAILURE);
   }
 
+  tamanioCodigo = (encabezado[6] << 8) | encabezado[7]; // tamaño del código en bytes
+
   return tamanioCodigo;
 }
 
