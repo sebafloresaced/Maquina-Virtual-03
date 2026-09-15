@@ -32,7 +32,7 @@ static void leerOperandos(MaquinaVirtual *maquina, int desplazamiento) {
     uint32_t direccionFisica;
     int i;
 
-    verificaDirFisica(maquina, maquina->registros[IP], &direccionFisica, desplazamiento + 1);
+    verificaDirFisica(maquina, maquina->registros[IP], &direccionFisica, desplazamiento);
 
     for (i = 0; i < desplazamiento; i++) {
         bytes[i] = maquina->memoria[direccionFisica + i + 1];

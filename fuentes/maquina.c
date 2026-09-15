@@ -52,11 +52,17 @@ void inicializarMaquina(MaquinaVirtual *maquina) {
 void cicloPrincipal(MaquinaVirtual *maquina) {
     
     int desplazamiento;
+    uint32_t direccionFisica;
+    uint8_t instruccion;
     // IP esta inicializado en 0 en cargador.c
 
     while (maquina->registros[IP] != -1) {
         
-        desensamblaInstruccion(maquina, maquina->memoria[maquina->registros[IP]], &desplazamiento);
+        verificaDirFisica(maquina, maquina->registros[IP], &direccionFisica, 0);
+
+        instruccion = maquina->memoria[direccionFisica];
+
+        desensamblaInstruccion(maquina, instruccion, &desplazamiento);
         
         maquina->registros[IP] += desplazamiento + 1;
 
