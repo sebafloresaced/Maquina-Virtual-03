@@ -62,30 +62,33 @@ static char *nombreRegistro(uint8_t codigo) {
     }
 }
 
-static char *obtieneOperando(MaquinaVirtual maquina, Operando OP) {
+static char *obtieneOperando(Operando OP) {
     
-    char *nombreoperando = malloc(2 * sizeof(char)); // Ajustar el tamaño según sea necesario
+    char *nombreoperando;
     
     uint8_t tipo = OP >> 24; 
 
     switch (tipo) {
             case REGISTRO:
-                char *registro = nombreRegistro(maquina.registros[OP] & 0x1F);
+                char *registro = nombreRegistro(OP & 0x1F);
                 strcpy(nombreoperando, registro);
+
                 break;
+
             case INMEDIATO:
-                int valor = maquina.registros[OP] & 0xFFFF;
+                int valor = OP & 0xFFFF;
                 char valor_str[12];
                 itoa(valor, valor_str, 10);
                 strcpy(nombreoperando, valor_str);
 
                 break;
+
             case MEMORIA:
                 strcpy(nombreoperando, "[");
 
-                strcat(nombreoperando, nombreRegistro(maquina.registros[OP] & 0x1F));
+                strcat(nombreoperando, nombreRegistro(OP & 0x1F));
                 
-                uint16_t offset = (maquina.registros[OP] >> 8) & 0xFFFF;
+                uint16_t offset = (OP >> 8) & 0xFFFF;
                 
                 if (offset != 0) {
                     strcat(nombreoperando, "+");
@@ -97,6 +100,7 @@ static char *obtieneOperando(MaquinaVirtual maquina, Operando OP) {
                 strcat(nombreoperando, "]");
 
                 break;
+
             default:
                 strcpy(nombreoperando, "OPERANDO DESCONOCIDO");
                 break;
@@ -122,8 +126,8 @@ void desensamblador(MaquinaVirtual maquina) {
         maquina.registros[IP] += desplazamiento + 1;
 
         strcpy(operacion, nombreOperacion(maquina.registros[OPC]));
-        strcpy(operando1, nombreRegistro(maquina.registros[OP1]));
-        strcpy(operando2, nombreRegistro(maquina.registros[OP2]));
+        strcpy(operando1, obtieneOperando(maquina.registros[OP1]));
+        strcpy(operando2, obtieneOperando(maquina.registros[OP2]));
         
         printf("0x%04X: %s %s, %s, %s\n", i, operacion, operando1, operando2);
         
