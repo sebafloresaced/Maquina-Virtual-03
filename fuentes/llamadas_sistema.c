@@ -1,6 +1,7 @@
 #include "../cabeceras/maquina.h"
 #include "../cabeceras/llamadas_sistema.h"
 #include "../cabeceras/operaciones.h"
+#include "../cabeceras/memoria.h"
 #include <stdio.h>
 
 // EDX -> posicion de memoria
@@ -23,7 +24,7 @@ void escribirDatos(MaquinaVirtual *maquina)
     uint32_t formato = maquina->registros[EAX];
     uint32_t cantidad = maquina->registros[ECX] & 0xFFFF;
 
-    for (int i = 0; i < cantidad; i++) {
+    for (unsigned int i = 0; i < cantidad; i++) {
         maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
         leerMemoria(maquina);
         printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt
@@ -40,7 +41,7 @@ void escribirDatos(MaquinaVirtual *maquina)
             printf("0b%b ", maquina->registros[MBR]);
         }
         if (formato & CARACTER) {
-            uint 8_t caracter = maquina->registros[MBR] & 0xFF;
+            uint8_t caracter = maquina->registros[MBR] & 0xFF;
             if (caracter >= 32 && caracter <= 126) { // rango de caracteres imprimibles
                 printf("%c ", caracter);
             } else {
@@ -61,7 +62,7 @@ void leerDatos(MaquinaVirtual *maquina)
 
     switch (formato) {
         case DECIMAL: 
-            for (int i = 0; i < cantidad; i++) {
+            for (unsigned int i = 0; i < cantidad; i++) {
                 scanf("%d", &maquina->registros[MBR]);
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
                 escribirMemoria(maquina);
@@ -69,15 +70,17 @@ void leerDatos(MaquinaVirtual *maquina)
             }
             break;
         case CARACTER: 
-            for (int i = 0; i < cantidad; i++) {
-                scanf("%c", &maquina->registros[MBR]);
+            char caracter;
+            for (unsigned int i = 0; i < cantidad; i++) {
+                scanf(" %c", &caracter);
+                maquina->registros[MBR] = (uint32_t)caracter;
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
                 escribirMemoria(maquina);
                 printf("[%04X]: %c \n", maquina->registros[MAR] & 0xFFFF, maquina->registros[MBR]);
             }
             break;
         case OCTAL: 
-            for (int i = 0; i < cantidad; i++) {
+            for (unsigned int i = 0; i < cantidad; i++) {
                 scanf("%o", &maquina->registros[MBR]);
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
                 escribirMemoria(maquina);
@@ -85,7 +88,7 @@ void leerDatos(MaquinaVirtual *maquina)
             }
             break;
         case BINARIO: 
-            for (int i = 0; i < cantidad; i++) {
+            for (unsigned int i = 0; i < cantidad; i++) {
                 scanf("%b", &maquina->registros[MBR]);
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
                 escribirMemoria(maquina);
@@ -93,7 +96,7 @@ void leerDatos(MaquinaVirtual *maquina)
             }
             break;
         case HEXADECIMAL: 
-            for (int i = 0; i < cantidad; i++) {
+            for (unsigned int i = 0; i < cantidad; i++) {
                 scanf("%x", &maquina->registros[MBR]);
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
                 escribirMemoria(maquina);
