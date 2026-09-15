@@ -8,6 +8,6 @@
 
 void verificaDirFisica(MaquinaVirtual *, uint32_t, uint32_t *, uint16_t);
 void leerMemoria(MaquinaVirtual *);
-void escribeMemoria(MaquinaVirtual *);
+void escribirMemoria(MaquinaVirtual *);
 
 #endif
