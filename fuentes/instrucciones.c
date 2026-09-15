@@ -13,12 +13,12 @@ static void cargarOperandos(MaquinaVirtual *maquina, uint8_t bytes[]) {
     tamanioA = maquina->registros[OP1] >> 24;
     tamanioB = maquina->registros[OP2] >> 24;
 
-    for (posicion = 0; posicion < tamanioB; i++) { // cargo primero el OPB
+    for (i = 0; i < tamanioB; i++) { // cargo primero el OPB
         valorB = (valorB << 8) | bytes[posicion];
         posicion++;
     }
 
-    for (posicion = 0; posicion < tamanioA; i++) {
+    for (i = 0; i < tamanioA; i++) {
         valorA = (valorA << 8) | bytes[posicion];
         posicion++;
     }
@@ -31,7 +31,8 @@ static void leerOperandos(MaquinaVirtual *maquina, int desplazamiento) {
     uint8_t bytes[6] = {0};
     uint32_t direccionFisica;
     int i;
-    verificaDirFisica(maquina, maquina->registros[IP], &direccionFisica, desplazamiento);
+
+    verificaDirFisica(maquina, maquina->registros[IP], &direccionFisica, desplazamiento + 1);
 
     for (i = 0; i < desplazamiento; i++) {
         bytes[i] = maquina->memoria[direccionFisica + i + 1];
@@ -41,7 +42,7 @@ static void leerOperandos(MaquinaVirtual *maquina, int desplazamiento) {
 }
 
 
-void desensamblaInstruccion(MaquinaVirtual *maquina, uint8_t instruccion, int *desplazamiento){ // devuelve el tamanio total de la instruccion, o -1 si falla la lectura
+void desensamblaInstruccion(MaquinaVirtual *maquina, uint8_t instruccion, int *desplazamiento){ // desplazamiento tiene el tamanio total de los operandos
     uint8_t OPA, OPB, OPERACION;
     
     if (instruccion & 0x10) { //2 operandos
@@ -60,7 +61,5 @@ void desensamblaInstruccion(MaquinaVirtual *maquina, uint8_t instruccion, int *d
     OPERACION = instruccion & 0x1F;
     maquina->registros[OPC] = OPERACION;
 
-    if (OPERACION == STOP)
-        maquina->registros[IP] = -1;
-
+    leerOperandos(maquina, *desplazamiento);
 }

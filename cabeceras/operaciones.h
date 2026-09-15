@@ -46,36 +46,33 @@
 
 typedef uint32_t Operando;
 
-static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op);
-static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor);
-
-void mov(MaquinaVirtual *);
-void add(MaquinaVirtual *);
-void sub(MaquinaVirtual *);
-void mul(MaquinaVirtual *);
-void divi(MaquinaVirtual *);
-void cmp(MaquinaVirtual *);
-void and(MaquinaVirtual *);
-void or(MaquinaVirtual *);
-void xor(MaquinaVirtual *);
-void swap(MaquinaVirtual *);
-void shl(MaquinaVirtual *);
-void shr(MaquinaVirtual *);
-void sar(MaquinaVirtual *);
-void ldl(MaquinaVirtual *);
-void ldh(MaquinaVirtual *);
-void rnd(MaquinaVirtual *);
-void sys(MaquinaVirtual *);
-void jmp(MaquinaVirtual *);
-void jp(MaquinaVirtual *);
-void jN(MaquinaVirtual *);
-void jz(MaquinaVirtual *);
-void jc(MaquinaVirtual *);
-void jv(MaquinaVirtual *);
-void jnp(MaquinaVirtual *);
-void jnn(MaquinaVirtual *);
-void jnz(MaquinaVirtual *);
-void not(MaquinaVirtual *);
-void stop(MaquinaVirtual *);
+void operacionMOV(MaquinaVirtual *);
+void operacionADD(MaquinaVirtual *);
+void operacionSUB(MaquinaVirtual *);
+void operacionMUL(MaquinaVirtual *);
+void operacionDIV(MaquinaVirtual *);
+void operacionCMP(MaquinaVirtual *);
+void operacionAND(MaquinaVirtual *);
+void operacionOR(MaquinaVirtual *);
+void operacionXOR(MaquinaVirtual *);
+void operacionSWAP(MaquinaVirtual *);
+void operacionSHL(MaquinaVirtual *);
+void operacionSHR(MaquinaVirtual *);
+void operacionSAR(MaquinaVirtual *);
+void operacionLDL(MaquinaVirtual *);
+void operacionLDH(MaquinaVirtual *);
+void operacionRND(MaquinaVirtual *);
+void operacionSYS(MaquinaVirtual *);
+void operacionJMP(MaquinaVirtual *);
+void operacionJP(MaquinaVirtual *);
+void operacionJN(MaquinaVirtual *);
+void operacionJZ(MaquinaVirtual *);
+void operacionJC(MaquinaVirtual *);
+void operacionJV(MaquinaVirtual *);
+void operacionJNP(MaquinaVirtual *);
+void operacionJNN(MaquinaVirtual *);
+void operacionJNZ(MaquinaVirtual *);
+void operacionNOT(MaquinaVirtual *);
+void operacionSTOP(MaquinaVirtual *);
 
 #endif
