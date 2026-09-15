@@ -1,5 +1,6 @@
 #include "../cabeceras/maquina.h"
 #include "../cabeceras/operaciones.h"
+#include <stdlib.h>
 
 void inicializarMaquina(MaquinaVirtual *maquina) {
     int i;
@@ -46,4 +47,27 @@ void inicializarMaquina(MaquinaVirtual *maquina) {
     maquina->Operaciones[NOT] = operacionNOT;
 
     maquina->Operaciones[STOP] = operacionSTOP;
+}
+
+void cicloPrincipal(MaquinaVirtual *maquina) {
+    
+    int desplazamiento;
+    // IP esta inicializado en 0 en cargador.c
+
+    while (maquina->registros[IP] != -1) {
+        
+        desensamblaInstruccion(maquina, maquina->memoria[maquina->registros[IP]], &desplazamiento);
+        
+        maquina->registros[IP] += desplazamiento + 1;
+
+        if (maquina->registros[OPC] >= CANT_OPERACIONES || maquina->Operaciones[maquina->registros[OPC]] == NULL) {
+            printf("Error: operación inválida\n");
+            exit(EXIT_FAILURE);
+        }
+
+        maquina->Operaciones[maquina->registros[OPC]](maquina);
+    }
+
+    printf("Fin de la ejecución\n");
+
 }
