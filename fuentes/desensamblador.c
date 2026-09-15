@@ -111,25 +111,34 @@ static char *obtieneOperando(Operando OP) {
 
 void desensamblador(MaquinaVirtual maquina) {
     
-    int inicio = maquina.segmentos[CS].base;
-    int fin = maquina.segmentos[CS].base + maquina.segmentos[CS].tamanio;
+    int inicio = maquina.segmentos[0].base;
+    int fin = inicio + maquina.segmentos[0].tamanio;
 
     int desplazamiento;
     char *operando1, *operando2, *operacion;
 
+    uint32_t direccionFisica;
+    uint8_t instruccion;
+
     printf("Desensamblador activado:\n\n");
 
-    for (int i = inicio; i < fin; i++) {
+    while (maquina.registros[IP] < fin) {
 
-        desensamblaInstruccion(maquina, maquina.memoria[maquina.registros[IP]], &desplazamiento);
-        
+        verificaDirFisica(maquina, maquina.registros[IP], &direccionFisica, 0);
+
+        instruccion = maquina.memoria[direccionFisica];
+
+        desensamblaInstruccion(maquina, instruccion, &desplazamiento);
+
         maquina.registros[IP] += desplazamiento + 1;
 
         strcpy(operacion, nombreOperacion(maquina.registros[OPC]));
         strcpy(operando1, obtieneOperando(maquina.registros[OP1]));
         strcpy(operando2, obtieneOperando(maquina.registros[OP2]));
         
-        printf("0x%04X: %s %s, %s, %s\n", i, operacion, operando1, operando2);
+        printf("0x%08X: 0x%08X 0x%08X 0x%08X   ||  %s, %s, %s\n", maquina.registros[IP], maquina.registros[OPC], maquina.registros[OP1], maquina.registros[OP2], operacion, operando1, operando2);
+        
+        
         
     }
         
