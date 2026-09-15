@@ -113,7 +113,7 @@ void operacionMOV(MaquinaVirtual *maquina)
 {
     uint32_t valor = obtenerValor(maquina, maquina->registros[OP2]);
 
-    actualizarCC(maquina, valor, 0, 0);
+    actualizarCC(maquina, valor, 0);
     escribirValor(maquina, maquina->registros[OP1], valor);
 }
 
@@ -423,5 +423,4 @@ void operacionNOT(MaquinaVirtual *maquina)
 void operacionSTOP(MaquinaVirtual *maquina)
 {
     maquina->registros[IP] = -1;
-    exit(EXIT_SUCCESS);
 }

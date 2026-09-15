@@ -1,33 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+
 #include "../cabeceras/maquina.h"
 #include "../cabeceras/operaciones.h"
+#include "../cabeceras/cargador.h"
+#include "../cabeceras/desensamblador.h"
 
-int main(void){
+int main(int argc, char *argv[]){ 
+    
     MaquinaVirtual maquina;
+    
+    char *rutaArchivo = (char *)malloc(strlen(argv[1]) + 1);
+    strcpy(rutaArchivo, argv[1]);
 
-    srand((unsigned int)time(NULL)); // para el RND
+    int disassemblerFlag = 0;
 
-    inicializarMaquina(&maquina);
-
-    maquina.registros[OP1] = 0x0100000A; // Registro EAX 10
-    maquina.registros[OP2] = 0x0100000B; // Registro EBX 11
-    maquina.registros[EBX] = 10;
+    if (argc == 3 && strcmp(argv[2], "-d") == 0)
+        disassemblerFlag = 1;
     
 
-    printf("Valor en EAX: %d\n", maquina.registros[EAX]);
+    inicializarMaquina(&maquina);
+    cargarPrograma(&maquina, rutaArchivo); 
 
-    maquina.Operaciones[MOV](&maquina);
-
-    printf("Valor en EAX después de MOV: %d\n", maquina.registros[EAX]);
-
-    maquina.registros[OP1] = 0x0100000A; // Registro EAX 10
-    maquina.registros[OP2] = 0x02FFFFFF; // inmediato -1
-
-    maquina.Operaciones[ADD](&maquina);
-
-    printf("Valor en EAX después de ADD: %d\n", maquina.registros[EAX]);
+    if (disassemblerFlag)
+        desensamblador(maquina);
+    
+    cicloPrincipal(&maquina);
 
     return 0;
-}
