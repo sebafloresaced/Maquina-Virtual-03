@@ -18,6 +18,5 @@ Maquina-Virtual-03/
 │   ├── instrucciones.c
 │   ├── operandos.c
 │   └── llamadas_sistema.c
-├── pruebas/
 └── README.md
 ```
