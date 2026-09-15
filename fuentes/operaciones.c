@@ -27,7 +27,6 @@ static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
             int16_t offset = (op >> 8) & 0xFFFF;
             uint8_t registro = op & 0x1F;
             uint16_t bytesAleer = sizeof(uint32_t); // 4 bytes a leer
-            uint32_t direccionFisica;
             uint32_t direccionLogica = maquina->registros[registro] + offset; //direccion donde apunta el registro + el desplazamiento
             
             maquina->registros[MAR] = bytesAleer << 16;
@@ -61,7 +60,6 @@ static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
             int16_t offset = (op >> 8) & 0xFFFF;
             uint8_t registro = op & 0x1F;
             uint16_t bytesAescribir = sizeof(uint32_t); // 4 bytes a escribir
-            uint32_t direccionFisica;
 
             uint32_t direccionLogica = maquina->registros[registro] + offset;
             
@@ -77,7 +75,6 @@ static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
 
 static void actualizarCC(MaquinaVirtual *maquina, uint64_t resultado64, int32_t v) { // V entra con 1/0 dependiendo de si se debe setear el bit
     uint32_t resultado = resultado64 & 0xFFFFFFFF; // Tomar solo los 32 bits menos significativos
-    
     if (resultado == 0) { // Z
         maquina->registros[CC] |= 0x40000000;
     }
@@ -104,6 +101,9 @@ static void actualizarCC(MaquinaVirtual *maquina, uint64_t resultado64, int32_t 
     else {
         maquina->registros[CC] &= ~0x10000000;
     }
+
+    printf("CC hexadecimal: 0x%08X\n",
+       (unsigned int)maquina->registros[CC]);
 }
 
 // OP1 = Operando A
@@ -113,20 +113,20 @@ void operacionMOV(MaquinaVirtual *maquina)
 {
     uint32_t valor = obtenerValor(maquina, maquina->registros[OP2]);
 
-    actualizarCC(maquina, valor, 0, 0);
+    actualizarCC(maquina, valor, 0);
     escribirValor(maquina, maquina->registros[OP1], valor);
 }
 
 void operacionADD(MaquinaVirtual *maquina)
 {
-    uint32_t valor1 = obtenerValor(maquina, maquina->registros[OP1]);
-    uint32_t valor2  = obtenerValor(maquina, maquina->registros[OP2]);
-    uint64_t resultado64 = (uint64_t)valor1 + valor2;
-    uint32_t resultado = (uint32_t)resultado64;
+    int32_t valor1 = obtenerValor(maquina, maquina->registros[OP1]);
+    int32_t valor2  = obtenerValor(maquina, maquina->registros[OP2]);
+    uint64_t resultado64 = (uint64_t)valor1 + (uint64_t)valor2;
+    int32_t resultado = (int32_t)resultado64;
 
-    int signo1 = valor1 >> 31;
-    int signo2 = valor2 >> 31;
-    int signoResultado = resultado >> 31;
+    int signo1 = valor1 >> 31 & 0x80000000;
+    int signo2 = valor2 >> 31 & 0x80000000;
+    int signoResultado = resultado >> 31 & 0x80000000;
 
     int v = (signo1 == signo2) && (signoResultado != signo1);
 
@@ -139,10 +139,8 @@ void operacionSUB(MaquinaVirtual *maquina)
     uint32_t valor1 = obtenerValor(maquina, maquina->registros[OP1]);
     uint32_t valor2  = obtenerValor(maquina, maquina->registros[OP2]);
 
-    uint64_t resultado64 = (uint64_t)valor1 - valor2;
+    uint64_t resultado64 = (uint64_t)valor1 + ~valor2 + 1;
     uint32_t resultado = (uint32_t)resultado64;
-
-    int c = valor1 >= valor2; // A - B = A + (~B + 1) => si A >= B no hay carry
 
     int signo1 = valor1 >> 31;
     int signo2 = valor2 >> 31;
@@ -162,7 +160,9 @@ void operacionMUL(MaquinaVirtual *maquina)
     uint64_t resultado64 = (uint64_t)valor1 * valor2;
     uint32_t resultado = (uint32_t)resultado64;
 
-    int v = resultado64 >> 32 != 0; 
+    // Producto con signo para comprobar V.
+    int64_t productoConSigno = (int64_t)(int32_t)valor1 * (int64_t)(int32_t)valor2;
+    int v = productoConSigno < INT32_MIN || productoConSigno > INT32_MAX; // verifica si entra en el rango de un int32_t
 
     actualizarCC(maquina, resultado64, v);
     escribirValor(maquina, maquina->registros[OP1], resultado);
@@ -178,7 +178,11 @@ void operacionDIV(MaquinaVirtual *maquina)
         uint32_t resultado = (uint32_t)resultado64;
         int32_t resto = valor1 % valor2;
 
-        actualizarCC(maquina, resultado64, v); // consultar como setear v
+        int v = (valor1 == INT32_MIN && valor2 == -1); 
+        // caso especial de overflow
+        // Estaria intentando representar INT32_MAX + 1
+
+        actualizarCC(maquina, resultado64, v); 
         escribirValor(maquina, maquina->registros[OP1], resultado);
         maquina->registros[AC] = resto;
     }
@@ -195,8 +199,6 @@ void operacionCMP(MaquinaVirtual *maquina)
 
     uint64_t resultado64 = (uint64_t)valor1 - valor2;
     uint32_t resultado = (uint32_t)resultado64;
-
-    int c = valor1 >= valor2; // A - B = A + (~B + 1) => si A >= B no hay carry
 
     int signo1 = valor1 >> 31;
     int signo2 = valor2 >> 31;
@@ -262,10 +264,22 @@ void operacionSHL(MaquinaVirtual *maquina)
     uint32_t valor1 = obtenerValor(maquina, maquina->registros[OP1]);
     uint32_t valor2  = obtenerValor(maquina, maquina->registros[OP2]);
 
-    uint64_t resultado64 = valor1 << valor2;
-    uint32_t resultado = (uint32_t)resultado64;
+    uint64_t resultado64 = (uint64_t)valor1 << valor2; // calculo el resultado de 64 bits para actualizarCC
+    
+    uint32_t resultado = valor1;
+    int v = 0;
+    for (uint32_t i = 0; i < valor2; i++) { // hago el desplazamiento de 1 bit a la izquierda valor2 veces para poder controlar el overflow (cambio de signo en alguna iteracion)
+        int signoAnterior = resultado >> 31;
 
-    actualizarCC(maquina, resultado64, c, v); // consultar como setear V
+        resultado <<= 1;
+
+        int signoNuevo = resultado >> 31;
+
+        if (signoAnterior != signoNuevo)
+            v = 1;
+    }
+
+    actualizarCC(maquina, resultado64, v); 
     escribirValor(maquina, maquina->registros[OP1], resultado);
 }
 
@@ -277,7 +291,7 @@ void operacionSHR(MaquinaVirtual *maquina)
     uint64_t resultado64 = (uint64_t)valor1 >> valor2;
     uint32_t resultado = (uint32_t)resultado64;
 
-    actualizarCC(maquina, resultado64, v); // consultar como setear V
+    actualizarCC(maquina, resultado64, 0);
     escribirValor(maquina, maquina->registros[OP1], resultado);
 }
 
@@ -289,7 +303,7 @@ void operacionSAR(MaquinaVirtual *maquina)
     uint64_t resultado64 = (int64_t)valor1 >> valor2;
     uint32_t resultado = (uint32_t)resultado64;
 
-    actualizarCC(maquina, resultado64, v); // consultar como setear C y V
+    actualizarCC(maquina, resultado64, 0); 
     escribirValor(maquina, maquina->registros[OP1], resultado);
 }
 
