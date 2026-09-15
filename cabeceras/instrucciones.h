@@ -4,4 +4,4 @@
 #include <stdint.h>
 #include "../cabeceras/maquina.h"
 
-int desensamblaInstruccion(MaquinaVirtual *maquina, uint8_t instruccion);
+void desensamblaInstruccion(MaquinaVirtual *maquina, uint8_t instruccion, int *desplazamiento);
