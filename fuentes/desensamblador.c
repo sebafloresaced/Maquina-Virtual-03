@@ -65,7 +65,7 @@ static char *nombreRegistro(uint8_t codigo) {
 
 static char *obtieneOperando(Operando OP) {
     
-    char *nombreoperando;
+    char *nombreoperando = NULL;
     
     uint8_t tipo = OP >> 24; 
 
@@ -78,9 +78,7 @@ static char *obtieneOperando(Operando OP) {
 
             case INMEDIATO:
                 int valor = OP & 0xFFFF;
-                char valor_str[12];
-                itoa(valor, valor_str, 10);
-                strcpy(nombreoperando, valor_str);
+                sprintf(nombreoperando, "%d", valor);
 
                 break;
 
@@ -94,7 +92,7 @@ static char *obtieneOperando(Operando OP) {
                 if (offset != 0) {
                     strcat(nombreoperando, "+");
                     char offset_str[12];
-                    itoa(offset, offset_str, 10);
+                    sprintf(offset_str, "%d", offset);
                     strcat(nombreoperando, offset_str);
                 }
 
@@ -115,7 +113,7 @@ void desensamblador(MaquinaVirtual maquina) {
     uint32_t inicio = maquina.segmentos[0].base;
     uint32_t fin = inicio + maquina.segmentos[0].tamanio;
     int desplazamiento;
-    char *operando1, *operando2, *operacion;
+    char *operando1 = NULL, *operando2 = NULL, *operacion = NULL;
 
     uint32_t direccionFisica = inicio;
     uint8_t instruccion;

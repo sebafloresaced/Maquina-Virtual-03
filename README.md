@@ -10,6 +10,7 @@ Maquina-Virtual-03/
 │   ├── instrucciones.h
 │   ├── operandos.h
 │   └── llamadas_sistema.h
+│   └── desensamblador.h
 ├── fuentes/
 │   ├── principal.c
 │   ├── maquina.c
@@ -18,5 +19,6 @@ Maquina-Virtual-03/
 │   ├── instrucciones.c
 │   ├── operandos.c
 │   └── llamadas_sistema.c
+│   └── desensamblador.c
 └── README.md
 ```
