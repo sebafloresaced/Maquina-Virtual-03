@@ -22,12 +22,6 @@ static int leerEncabezado(FILE *archivo) {
     exit(EXIT_FAILURE);
   }
 
-  tamanioCodigo = ((uint16_t)encabezado[6] << 8) | encabezado[7];
-  if (tamanioCodigo > TAM_MEMORIA) { // consultar si tirar error o cargar el codigo que entre en memoria
-    printf("Error: el codigo no entra en la memoria\n");
-    exit(EXIT_FAILURE);
-  }
-
   return tamanioCodigo;
 }
 
@@ -43,10 +37,10 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina) {
   }
 
   tamanioCodigo = leerEncabezado(archivo);
-  if (tamanioCodigo == -1) { // hubo un error con el encabezado
-    fclose(archivo);
-    exit(EXIT_FAILURE);
+  if (tamanioCodigo > TAM_MEMORIA) { // el tamaño del código excede la memoria disponible
+    tamanioCodigo = TAM_MEMORIA;
   }
+  
   if (fread(maquina->memoria, 1, tamanioCodigo, archivo) != (size_t)tamanioCodigo) { // no se pudieron leer la cantidad de bytes indicada
     printf("Error: el archivo contiene menos codigo del indicado\n");
     fclose(archivo);
