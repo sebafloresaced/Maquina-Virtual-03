@@ -46,5 +46,6 @@ struct MaquinaVirtual {
 };
 
 void inicializarMaquina(MaquinaVirtual *maquina);
+void cicloPrincipal(MaquinaVirtual *maquina);
 
 #endif
