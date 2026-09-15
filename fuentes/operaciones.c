@@ -437,5 +437,4 @@ void operacionNOT(MaquinaVirtual *maquina)
 void operacionSTOP(MaquinaVirtual *maquina)
 {
     maquina->registros[IP] = -1;
-    exit(EXIT_SUCCESS);
 }
