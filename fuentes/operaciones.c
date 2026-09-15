@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "../cabeceras/operaciones.h"
 #include "../cabeceras/memoria.h"
+#include "../cabeceras/llamadas_sistema.h"
 
 static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
 {
@@ -68,7 +69,7 @@ static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
             maquina->registros[LAR] = direccionLogica;
             maquina->registros[MBR] = valor;
 
-            escribeMemoria(maquina); //escribir 4 bytes de memoria desde MBR
+            escribirMemoria(maquina); //escribir 4 bytes de memoria desde MBR
             break;
         }
     }
@@ -315,10 +316,10 @@ void operacionSYS(MaquinaVirtual *maquina)
     uint32_t operacion = obtenerValor(maquina,maquina->registros[OP1]);
 
     switch (operacion) {
-        case 1:
+        case LEER:
             leerDatos(maquina);
             break;
-        case 2:
+        case ESCRIBIR:
             escribirDatos(maquina);
             break;
         default:

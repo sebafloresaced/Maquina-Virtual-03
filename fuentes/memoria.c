@@ -52,7 +52,7 @@ void leerMemoria(MaquinaVirtual *maquina)
     
 }
 
-void escribeMemoria(MaquinaVirtual *maquina)
+void escribirMemoria(MaquinaVirtual *maquina)
 {
     uint32_t direccionFisica;
     uint16_t bytesAcceso = (maquina->registros[MAR] >> 16);
