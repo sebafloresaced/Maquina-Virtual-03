@@ -1,6 +1,9 @@
 #include "../cabeceras/maquina.h"
 #include "../cabeceras/operaciones.h"
+#include "../cabeceras/instrucciones.h"
+#include "../cabeceras/memoria.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 void inicializarMaquina(MaquinaVirtual *maquina) {
     int i;
