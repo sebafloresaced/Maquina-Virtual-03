@@ -30,7 +30,7 @@ int main(int argc, char *argv[]){
     
     printf("\nIniciando ejecucion del programa:\n");
 
-    // cicloPrincipal(&maquina);
+    cicloPrincipal(&maquina);
 
     return 0;
 }
