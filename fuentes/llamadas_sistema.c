@@ -19,7 +19,9 @@
 void escribirDatos(MaquinaVirtual *maquina) 
 {
     uint32_t tamanio = maquina->registros[ECX] >> 16;
-    maquina->registros[MAR] = tamanio << 16;
+    uint32_t direccionFisica;
+    verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
+    maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
 
     uint32_t formato = maquina->registros[EAX];
     uint32_t cantidad = maquina->registros[ECX] & 0xFFFF;
@@ -27,7 +29,7 @@ void escribirDatos(MaquinaVirtual *maquina)
     for (unsigned int i = 0; i < cantidad; i++) {
         maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
         leerMemoria(maquina);
-        printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt
+        printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt de direccion fisica
         if (formato & HEXADECIMAL) {
             printf("0x%X ", maquina->registros[MBR]);
         }
@@ -55,52 +57,66 @@ void escribirDatos(MaquinaVirtual *maquina)
 void leerDatos(MaquinaVirtual *maquina) 
 {
     uint32_t tamanio = maquina->registros[ECX] >> 16;
-    maquina->registros[MAR] = tamanio << 16;
-
+    uint32_t direccionFisica;
     uint32_t formato = maquina->registros[EAX];
     uint32_t cantidad = maquina->registros[ECX] & 0xFFFF;
 
     switch (formato) {
         case DECIMAL: 
             for (unsigned int i = 0; i < cantidad; i++) {
-                scanf("%d", &maquina->registros[MBR]);
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
+                verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
+                maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
+
+                printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt
+                scanf("%d", &maquina->registros[MBR]);
                 escribirMemoria(maquina);
-                printf("[%04X]: %d \n", maquina->registros[MAR] & 0xFFFF, maquina->registros[MBR]); // prompt
             }
             break;
         case CARACTER: 
             char caracter;
             for (unsigned int i = 0; i < cantidad; i++) {
+                maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
+                verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
+                maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
+                
+                printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt
                 scanf(" %c", &caracter);
                 maquina->registros[MBR] = (uint32_t)caracter;
-                maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
                 escribirMemoria(maquina);
-                printf("[%04X]: %c \n", maquina->registros[MAR] & 0xFFFF, maquina->registros[MBR]);
             }
             break;
         case OCTAL: 
             for (unsigned int i = 0; i < cantidad; i++) {
-                scanf("%o", &maquina->registros[MBR]);
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
+                verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
+                maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
+                
+                printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt
+                scanf("%o", &maquina->registros[MBR]);
                 escribirMemoria(maquina);
-                printf("[%04X]: 0%o \n", maquina->registros[MAR] & 0xFFFF, maquina->registros[MBR]);
             }
             break;
         case BINARIO: 
             for (unsigned int i = 0; i < cantidad; i++) {
-                scanf("%b", &maquina->registros[MBR]);
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
+                verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
+                maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
+                
+                printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt
+                scanf("%b", &maquina->registros[MBR]);
                 escribirMemoria(maquina);
-                printf("[%04X]: 0b%b \n", maquina->registros[MAR] & 0xFFFF, maquina->registros[MBR]);
             }
             break;
         case HEXADECIMAL: 
             for (unsigned int i = 0; i < cantidad; i++) {
-                scanf("%x", &maquina->registros[MBR]);
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
+                verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
+                maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
+                
+                printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt
+                scanf("%x", &maquina->registros[MBR]);
                 escribirMemoria(maquina);
-                printf("[%04X]: 0x%X \n", maquina->registros[MAR] & 0xFFFF, maquina->registros[MBR]);
             }
             break;
     }
