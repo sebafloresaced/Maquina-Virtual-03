@@ -58,7 +58,7 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
     uint32_t direccionFisica;
     uint8_t instruccion;
     // IP esta inicializado en 0 en cargador.c
-
+    
     while (maquina->registros[IP] != -1) {
         
         verificaDirFisica(maquina, maquina->registros[IP], &direccionFisica, 0);
