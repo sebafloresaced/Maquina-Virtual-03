@@ -8,16 +8,16 @@ Maquina-Virtual-03/
 │   ├── cargador.h
 │   ├── memoria.h
 │   ├── instrucciones.h
-│   ├── operandos.h
+│   ├── operaciones.h
 │   └── llamadas_sistema.h
 │   └── desensamblador.h
 ├── fuentes/
-│   ├── principal.c
+│   ├── main.c
 │   ├── maquina.c
 │   ├── cargador.c
 │   ├── memoria.c
 │   ├── instrucciones.c
-│   ├── operandos.c
+│   ├── operaciones.c
 │   └── llamadas_sistema.c
 │   └── desensamblador.c
 └── README.md
@@ -79,3 +79,12 @@ vmx filename.vmx [-d]
 -  -d (opcional) es un flag que fuerza a la máquina virtual a mostrar el código desensamblado
 (disassembler), es decir, un código Assembler que se corresponde con el código máquina cargado
 en la memoria principal.
+
+
+
+to-do list:
+- Nombres de archivo en la estructura del README
+- DIV funciona mal con numeros negativos
+- SAR no conserva signo
+- SYS 2 debe mostrar mas de un caracter
+- El desensamblador no puede mostrar numeros negativos

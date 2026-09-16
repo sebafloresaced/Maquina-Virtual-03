@@ -29,6 +29,11 @@ static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
             uint16_t bytesAleer = sizeof(uint32_t); // 4 bytes a leer
             uint32_t direccionLogica = maquina->registros[registro] + offset; //direccion donde apunta el registro + el desplazamiento
             
+            if (maquina->registros[registro] >> 16 != direccionLogica >> 16) {
+                printf("Error: el desplazamiento cambia el segmento\n");
+                exit(EXIT_FAILURE);
+            }
+
             maquina->registros[MAR] = bytesAleer << 16;
             maquina->registros[LAR] = direccionLogica;
 
@@ -63,6 +68,11 @@ static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
 
             uint32_t direccionLogica = maquina->registros[registro] + offset;
             
+            if (maquina->registros[registro] >> 16 != direccionLogica >> 16) {
+                printf("Error: el desplazamiento cambia el segmento\n");
+                exit(EXIT_FAILURE);
+            }
+
             maquina->registros[MAR] = bytesAescribir << 16;
             maquina->registros[LAR] = direccionLogica;
             maquina->registros[MBR] = valor;
@@ -172,17 +182,17 @@ void operacionDIV(MaquinaVirtual *maquina)
     int32_t valor2  = obtenerValor(maquina, maquina->registros[OP2]);
     
     if (valor2 != 0) {
-        uint64_t resultado64 = (uint64_t)valor1 / valor2;
-        uint32_t resultado = (uint32_t)resultado64;
-        int32_t resto = valor1 % valor2;
+        int64_t cociente = (int64_t)valor1 / (int64_t)valor2;
+        uint32_t resultado = (uint32_t)cociente;
+        int64_t resto = (int64_t)valor1 % (int64_t)valor2;
 
         int v = (valor1 == INT32_MIN && valor2 == -1); 
         // caso especial de overflow
         // Estaria intentando representar INT32_MAX + 1
 
-        actualizarCC(maquina, resultado64, v); 
+        actualizarCC(maquina, (uint64_t)resultado, v); 
         escribirValor(maquina, maquina->registros[OP1], resultado);
-        maquina->registros[AC] = resto;
+        maquina->registros[AC] = (int32_t)resto;
     }
     else {
         printf("Error: division por cero");
@@ -195,7 +205,7 @@ void operacionCMP(MaquinaVirtual *maquina)
     uint32_t valor1 = obtenerValor(maquina, maquina->registros[OP1]);
     uint32_t valor2  = obtenerValor(maquina, maquina->registros[OP2]);
 
-    uint64_t resultado64 = (uint64_t)valor1 - valor2;
+    uint64_t resultado64 = (uint64_t)valor1 + ~valor2 + 1;
     uint32_t resultado = (uint32_t)resultado64;
 
     int signo1 = valor1 >> 31;
@@ -298,10 +308,10 @@ void operacionSAR(MaquinaVirtual *maquina)
     uint32_t valor1 = obtenerValor(maquina, maquina->registros[OP1]);
     uint32_t valor2  = obtenerValor(maquina, maquina->registros[OP2]);
 
-    uint64_t resultado64 = (int64_t)valor1 >> valor2;
+    uint64_t resultado64 = (int64_t)(int32_t)valor1 >> valor2;
     uint32_t resultado = (uint32_t)resultado64;
 
-    actualizarCC(maquina, resultado64, 0); 
+    actualizarCC(maquina, (uint64_t)resultado, 0); // se que el carry va a ser 0, pasandole el resultado de 32 bits a 64 bits no se pierde informacion y no tengo problema con los 1's del signo
     escribirValor(maquina, maquina->registros[OP1], resultado);
 }
 
