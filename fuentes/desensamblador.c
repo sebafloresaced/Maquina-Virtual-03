@@ -140,16 +140,28 @@ void desensamblador(MaquinaVirtual maquina) {
         obtieneOperando(maquina.registros[OP1], operando1); 
         obtieneOperando(maquina.registros[OP2], operando2);
 
-        printf("0x%08X: 0x%08X 0x%08X 0x%08X   ||  %-4s", direccionFisica, maquina.registros[OPC], maquina.registros[OP1], maquina.registros[OP2], operacion);
+        int tamanio = desplazamiento + 1;
 
-        if (operando1[0] != '\0' && operando2[0] != '\0')
-            printf(" %s, %s", operando1, operando2);
-        else if (operando1[0] != '\0')
+        printf("[%04X] ", (unsigned int)direccionFisica);
+        for (int j = 0; j < tamanio; j++) {
+            printf("%02X ", (unsigned int)maquina.memoria[direccionFisica + j]);
+        }
+
+        // Alinea la columna de las operaciones.
+        for (int j = tamanio; j < 7; j++)
+            printf("   ");
+
+        printf("| %-5s", operacion);
+
+        if (operando1[0] != '\0')
             printf(" %s", operando1);
+
+        if (operando2[0] != '\0')
+            printf(", %s", operando2);
 
         printf("\n");
 
-        direccionFisica += desplazamiento + 1;
+        direccionFisica += tamanio;
         
     }
         
