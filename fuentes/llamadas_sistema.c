@@ -18,7 +18,7 @@
 
 void escribirDatos(MaquinaVirtual *maquina) 
 {
-    uint32_t tamanio = (uint32_t)(maquina->registros[ECX] >> 16);
+    uint32_t tamanio = (uint32_t)maquina->registros[ECX] >> 16;
     uint32_t direccionFisica;
 
     uint32_t formato = maquina->registros[EAX];
@@ -60,7 +60,7 @@ void escribirDatos(MaquinaVirtual *maquina)
 
 void leerDatos(MaquinaVirtual *maquina) 
 {
-    uint32_t tamanio = maquina->registros[ECX] >> 16;
+    uint32_t tamanio = (uint32_t)maquina->registros[ECX] >> 16;
     uint32_t direccionFisica;
     uint32_t formato = maquina->registros[EAX];
     uint32_t cantidad = maquina->registros[ECX] & 0xFFFF;
