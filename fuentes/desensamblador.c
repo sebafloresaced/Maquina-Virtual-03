@@ -79,9 +79,10 @@ static void obtieneOperando(Operando OP, st15 nombre) {
                 break;
 
             case INMEDIATO:
-                int valor = OP & 0xFFFF;
+                int16_t valor = (int16_t)(OP & 0xFFFF);
                 st6 valor_str;
-                sprintf(valor_str, "%d", valor);
+
+                sprintf(valor_str, "%d", (int)valor);
                 strcpy(nombreoperando, valor_str);
 
                 break;
