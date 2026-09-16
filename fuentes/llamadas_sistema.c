@@ -52,6 +52,7 @@ void escribirDatos(MaquinaVirtual *maquina)
                     printf("%c", caracter);
                 else
                     printf(".");
+            }
         }
         printf("\n");
     }
