@@ -80,8 +80,8 @@ static void obtieneOperando(Operando OP, st15 nombre) {
 
             case INMEDIATO:
                 int valor = OP & 0xFFFF;
-                char valor_str[12];
-                itoa(valor, valor_str, 10);
+                st6 valor_str;
+                sprintf(valor_str, "%d", valor);
                 strcpy(nombreoperando, valor_str);
 
                 break;
@@ -97,8 +97,8 @@ static void obtieneOperando(Operando OP, st15 nombre) {
                 
                 if (offset != 0) {
                     strcat(nombreoperando, "+");
-                    char offset_str[12];
-                    itoa(offset, offset_str, 10);
+                    st6 offset_str;
+                    sprintf(offset_str, "%d", offset);
                     strcat(nombreoperando, offset_str);
                 }
 
@@ -111,7 +111,7 @@ static void obtieneOperando(Operando OP, st15 nombre) {
                 break;
         }
 
-    strcpy(nombre, nombreoperando);
+        strcpy(nombre, nombreoperando);
 }
 
 void desensamblador(MaquinaVirtual maquina) {
@@ -119,25 +119,37 @@ void desensamblador(MaquinaVirtual maquina) {
     uint32_t inicio = maquina.segmentos[0].base;
     uint32_t fin = inicio + maquina.segmentos[0].tamanio;
     int desplazamiento;
-    char *operando1, *operando2, *operacion;
+    st15 operando1, operando2, operacion;
 
     uint32_t direccionFisica = inicio;
     uint8_t instruccion;
 
     printf("Desensamblador activado:\n\n");
 
-    while (direccionFisica < fin) {
-        instruccion = maquina.memoria[direccionFisica];
+    maquina.registros[IP] = maquina.registros[CS];
 
+    while (direccionFisica < fin) {
+
+        instruccion = maquina.memoria[direccionFisica];
         desensamblaInstruccion(&maquina, instruccion, &desplazamiento);
 
-        direccionFisica += desplazamiento + 1;
-
-        nombreOperacion(maquina.registros[OPC], operacion);
-        obtieneOperando(maquina.registros[OP1], operando1);
-        obtieneOperando(maquina.registros[OP2], operando2);
+        maquina.registros[IP] += desplazamiento + 1;
         
-        printf("0x%08X: 0x%08X 0x%08X 0x%08X   ||  %s  %s, %s\n", direccionFisica, maquina.registros[OPC], maquina.registros[OP1], maquina.registros[OP2], operacion, operando1, operando2);
+        
+        nombreOperacion(maquina.registros[OPC], operacion);
+        obtieneOperando(maquina.registros[OP1], operando1); 
+        obtieneOperando(maquina.registros[OP2], operando2);
+
+        printf("0x%08X: 0x%08X 0x%08X 0x%08X   ||  %-4s", direccionFisica, maquina.registros[OPC], maquina.registros[OP1], maquina.registros[OP2], operacion);
+
+        if (operando1[0] != '\0' && operando2[0] != '\0')
+            printf(" %s, %s", operando1, operando2);
+        else if (operando1[0] != '\0')
+            printf(" %s", operando1);
+
+        printf("\n");
+
+        direccionFisica += desplazamiento + 1;
         
     }
         
