@@ -129,7 +129,7 @@ void operacionADD(MaquinaVirtual *maquina)
 {
     int32_t valor1 = obtenerValor(maquina, maquina->registros[OP1]);
     int32_t valor2  = obtenerValor(maquina, maquina->registros[OP2]);
-    uint64_t resultado64 = (uint64_t)valor1 + (uint64_t)valor2;
+    uint64_t resultado64 = (uint64_t)(uint32_t)valor1 + (uint64_t)(uint32_t)valor2;
     int32_t resultado = (int32_t)resultado64;
 
     int signo1 = valor1 >> 31 & 0x80000000;

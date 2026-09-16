@@ -18,16 +18,16 @@
 
 void escribirDatos(MaquinaVirtual *maquina) 
 {
-    uint32_t tamanio = maquina->registros[ECX] >> 16;
+    uint32_t tamanio = (uint32_t)(maquina->registros[ECX] >> 16);
     uint32_t direccionFisica;
-    verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
-    maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
 
     uint32_t formato = maquina->registros[EAX];
     uint32_t cantidad = maquina->registros[ECX] & 0xFFFF;
 
     for (unsigned int i = 0; i < cantidad; i++) {
         maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
+        verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
+        maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
         leerMemoria(maquina);
         printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt de direccion fisica
         if (formato & HEXADECIMAL) {
