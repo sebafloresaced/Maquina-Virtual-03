@@ -79,12 +79,3 @@ vmx filename.vmx [-d]
 -  -d (opcional) es un flag que fuerza a la máquina virtual a mostrar el código desensamblado
 (disassembler), es decir, un código Assembler que se corresponde con el código máquina cargado
 en la memoria principal.
-
-
-
-to-do list:
-- Nombres de archivo en la estructura del README
-- DIV funciona mal con numeros negativos
-- SAR no conserva signo
-- SYS 2 debe mostrar mas de un caracter
-- El desensamblador no puede mostrar numeros negativos

@@ -29,7 +29,7 @@ static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
             uint16_t bytesAleer = sizeof(uint32_t); // 4 bytes a leer
             uint32_t direccionLogica = maquina->registros[registro] + offset; //direccion donde apunta el registro + el desplazamiento
             
-            if (maquina->registros[registro] >> 16 != direccionLogica >> 16) {
+            if (maquina->registros[registro] >> 16 != (int32_t)(direccionLogica >> 16)) {
                 printf("Error: el desplazamiento cambia el segmento\n");
                 exit(EXIT_FAILURE);
             }
@@ -68,7 +68,7 @@ static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
 
             uint32_t direccionLogica = maquina->registros[registro] + offset;
             
-            if (maquina->registros[registro] >> 16 != direccionLogica >> 16) {
+            if (maquina->registros[registro] >> 16 != (int32_t)(direccionLogica >> 16)) {
                 printf("Error: el desplazamiento cambia el segmento\n");
                 exit(EXIT_FAILURE);
             }
