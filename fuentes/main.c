@@ -17,7 +17,7 @@ int main(int argc, char *argv[]){
 
     int disassemblerFlag = 0;
 
-    if (argc == 3 && strcmp(argv[2], "-d") == 0)
+    if (argc == 3 && strcmp(argv[2], "[-d]") == 0)
         disassemblerFlag = 1;
     
     srand((unsigned int)time(NULL)); // para la operacion RND
