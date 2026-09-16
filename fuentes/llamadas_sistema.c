@@ -43,12 +43,15 @@ void escribirDatos(MaquinaVirtual *maquina)
             printf("0b%b ", maquina->registros[MBR]);
         }
         if (formato & CARACTER) {
-            uint8_t caracter = maquina->registros[MBR] & 0xFF;
-            if (caracter >= 32 && caracter <= 126) { // rango de caracteres imprimibles
-                printf("%c ", caracter);
-            } else {
-                printf(". "); // caracter no imprimible
-            }
+            uint32_t valor = (uint32_t)maquina->registros[MBR];
+            for (uint32_t j = 0; j < tamanio; j++) {
+                uint32_t desplazamiento = 8 * (tamanio - 1 - j);
+                uint8_t caracter = (valor >> desplazamiento) & 0xFF;
+
+                if (caracter >= 32 && caracter <= 126)
+                    printf("%c", caracter);
+                else
+                    printf(".");
         }
         printf("\n");
     }
