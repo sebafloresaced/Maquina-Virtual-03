@@ -101,6 +101,7 @@ static void actualizarCC(MaquinaVirtual *maquina, uint64_t resultado64, int32_t 
     else {
         maquina->registros[CC] &= ~0x10000000;
     }
+
 }
 
 // OP1 = Operando A
