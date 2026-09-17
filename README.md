@@ -8,16 +8,16 @@ Maquina-Virtual-03/
 │   ├── cargador.h
 │   ├── memoria.h
 │   ├── instrucciones.h
-│   ├── operandos.h
+│   ├── operaciones.h
 │   └── llamadas_sistema.h
 │   └── desensamblador.h
 ├── fuentes/
-│   ├── principal.c
+│   ├── main.c
 │   ├── maquina.c
 │   ├── cargador.c
 │   ├── memoria.c
 │   ├── instrucciones.c
-│   ├── operandos.c
+│   ├── operaciones.c
 │   └── llamadas_sistema.c
 │   └── desensamblador.c
 └── README.md
