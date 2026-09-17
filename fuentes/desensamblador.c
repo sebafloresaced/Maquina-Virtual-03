@@ -79,9 +79,10 @@ static void obtieneOperando(Operando OP, st15 nombre) {
                 break;
 
             case INMEDIATO:
-                int valor = OP & 0xFFFF;
-                st6 valor_str;
-                sprintf(valor_str, "%d", valor);
+                int16_t valor = (int16_t)(OP & 0xFFFF);
+                st7 valor_str;
+
+                sprintf(valor_str, "%d", (int)valor);
                 strcpy(nombreoperando, valor_str);
 
                 break;
@@ -93,12 +94,11 @@ static void obtieneOperando(Operando OP, st15 nombre) {
                 nombreRegistro(OP & 0x1F, registroMemoria);
                 strcat(nombreoperando, registroMemoria);
                 
-                uint16_t offset = (OP >> 8) & 0xFFFF;
+                int16_t offset = (int16_t)((OP >> 8) & 0xFFFF);
                 
                 if (offset != 0) {
-                    strcat(nombreoperando, "+");
-                    st6 offset_str;
-                    sprintf(offset_str, "%d", offset);
+                    st7 offset_str;
+                    sprintf(offset_str, "%+d", (int)offset);
                     strcat(nombreoperando, offset_str);
                 }
 

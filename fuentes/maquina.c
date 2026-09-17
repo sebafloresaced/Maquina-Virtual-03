@@ -61,7 +61,7 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
     
     while (maquina->registros[IP] != -1) {
         
-        verificaDirFisica(maquina, maquina->registros[IP], &direccionFisica, 0);
+        verificaDirFisica(maquina, maquina->registros[IP], &direccionFisica, 1);
 
         instruccion = maquina->memoria[direccionFisica];
 
