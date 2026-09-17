@@ -1,7 +1,26 @@
-MOV [0], 42       ; Guarda 42 al comienzo del segmento de datos
-MOV EDX, CS      ; EDX = 0x00000000
-LDL EDX, -1      ; EDX = 0x0000FFFF
-MOV EAX, [EDX+1] ; Deberia detectar el cambio de segmento
+MOV EAX, 01
+MOV EDX, DS
+LDH ECX, 4
+LDL ECX, 1
+MOV EFX, 0
+MOV EEX, 0
+PRIMERA: SYS 1
+CMP [EDX], 0
+JN SEGUNDA
+ADD EFX, [EDX]
+ADD EEX, 1
+JMP PRIMERA
+SEGUNDA: CMP EEX, 1
+JZ IMPRIMIR
+SYS 1
+SUB EEX, 1
+SUB EFX, [EDX]
+JMP SEGUNDA
+IMPRIMIR: MOV [EDX], EFX
+MOV EAX, 0x01
+LDH ECX, 4
+LDL ECX, 1
+SYS 2
 STOP
 
 
