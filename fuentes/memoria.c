@@ -14,7 +14,7 @@ void verificaDirFisica(MaquinaVirtual *maquina, uint32_t direccionLogica, uint32
     
     if ((segmento >= CANT_SEGMENTOS)  || (maquina->segmentos[segmento].base == -1 || maquina->segmentos[segmento].tamanio == -1)) // segmento invalido
        {
-        printf("Error: acceso a segmento de memoria invalido");
+        printf("Error: Fallo de segmento (acceso a segmento de memoria invalido)");
         exit(EXIT_FAILURE);
        }
 
@@ -27,7 +27,7 @@ void verificaDirFisica(MaquinaVirtual *maquina, uint32_t direccionLogica, uint32
 
     if (!(*direccionFisica >= base && limiteAcceso <= limiteSegmento))
     {
-        printf("Error: acceso a memoria fuera de los limites");
+        printf("Error: Fallo de segmento (fuera de los limites del segmento)");
         exit(EXIT_FAILURE);
     }
     
