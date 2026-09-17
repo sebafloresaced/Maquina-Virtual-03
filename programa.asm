@@ -1,34 +1,7 @@
-MOV EDX,DS
-LDL ECX,1
-LDH ECX,4
-MOV EAX,1
-SYS 1
-
-MOV EBX, [EDX]
-
-MOV EAX,1
-CMP EBX,1
-JNP FIN
-
-MOV EFX,EBX
-
-FACT: MOV EAX,0
-SUB EFX,1
-MOV ECX,EFX
-
-SUMA: ADD EAX,EBX
-SUB ECX,1
-CMP ECX,0
-JP SUMA
-
-MOV EBX, EAX
-CMP EFX,1
-JP FACT
-
-FIN: MOV EDX, DS
-MOV [EDX], EBX
-LDL ECX,1
-LDH ECX,4
-MOV EAX,1
-SYS 2
+MOV [0], 42       ; Guarda 42 al comienzo del segmento de datos
+MOV EDX, CS      ; EDX = 0x00000000
+LDL EDX, -1      ; EDX = 0x0000FFFF
+MOV EAX, [EDX+1] ; Deberia detectar el cambio de segmento
 STOP
+
+
