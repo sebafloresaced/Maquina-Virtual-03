@@ -346,8 +346,8 @@ void operacionSYS(MaquinaVirtual *maquina)
             escribirDatos(maquina);
             break;
         default:
-            printf("Error: llamada al sistema desconocida");
-            exit(EXIT_FAILURE);
+            // printf("Error: llamada al sistema desconocida");
+            // exit(EXIT_FAILURE);
     }
 }
 
