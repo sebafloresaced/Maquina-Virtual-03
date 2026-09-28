@@ -1,26 +1,227 @@
-MOV EAX, 01
+; Cada resultado ocupa 4 bytes en el segmento de datos.
+; Se hacen 20 pruebas y se guarda 1/0 dependiendo del exito
+; Inicialmente todos quedan en 0 (prueba fallida).
+
 MOV EDX, DS
-LDH ECX, 4
-LDL ECX, 1
+MOV ECX, 20
+
+INICIALIZAR: MOV [EDX], 0
+ADD EDX, 4
+SUB ECX, 1
+JNZ INICIALIZAR
+
+
+; 1. MOV con inmediato negativo
+MOV EBX, -123
+CMP EBX, -123
+JNZ PRUEBA2
+MOV [0], 1
+
+
+; 2. ADD: 7 + 5 = 12
+PRUEBA2: MOV EBX, 7
+ADD EBX, 5
+CMP EBX, 12
+JNZ PRUEBA3
+MOV [4], 1
+
+
+; 3. SUB: 3 - 8 = -5
+PRUEBA3: MOV EBX, 3
+SUB EBX, 8
+CMP EBX, -5
+JNZ PRUEBA4
+MOV [8], 1
+
+
+; 4. MUL: -6 * 7 = -42
+PRUEBA4: MOV EBX, -6
+MUL EBX, 7
+CMP EBX, -42
+JNZ PRUEBA5
+MOV [12], 1
+
+
+; 5. DIV positivo: 17 / 5 = 3, resto 2
+PRUEBA5: MOV EBX, 17
+DIV EBX, 5
+CMP EBX, 3
+JNZ PRUEBA6
+CMP AC, 2
+JNZ PRUEBA6
+MOV [16], 1
+
+
+; 6. DIV dividendo negativo: -17 / 5 = -3, resto -2
+PRUEBA6: MOV EBX, -17
+DIV EBX, 5
+CMP EBX, -3
+JNZ PRUEBA7
+CMP AC, -2
+JNZ PRUEBA7
+MOV [20], 1
+
+
+; 7. DIV divisor negativo: 17 / -5 = -3, resto 2
+PRUEBA7: MOV EBX, 17
+DIV EBX, -5
+CMP EBX, -3
+JNZ PRUEBA8
+CMP AC, 2
+JNZ PRUEBA8
+MOV [24], 1
+
+
+; 8. AND: 12 AND 10 = 8
+PRUEBA8: MOV EBX, 12
+AND EBX, 10
+CMP EBX, 8
+JNZ PRUEBA9
+MOV [28], 1
+
+
+; 9. OR: 12 OR 10 = 14
+PRUEBA9: MOV EBX, 12
+OR EBX, 10
+CMP EBX, 14
+JNZ PRUEBA10
+MOV [32], 1
+
+
+; 10. XOR: 12 XOR 10 = 6
+PRUEBA10: MOV EBX, 12
+XOR EBX, 10
+CMP EBX, 6
+JNZ PRUEBA11
+MOV [36], 1
+
+
+; 11. NOT: NOT 0 = -1
+PRUEBA11: MOV EBX, 0
+NOT EBX
+CMP EBX, -1
+JNZ PRUEBA12
+MOV [40], 1
+
+
+; 12. SWAP entre registro y memoria
+PRUEBA12: MOV EBX, 11
+MOV [100], 22
+SWAP EBX, [100]
+CMP EBX, 22
+JNZ PRUEBA13
+CMP [100], 11
+JNZ PRUEBA13
+MOV [44], 1
+
+
+; 13. SHL: 3 << 4 = 48
+PRUEBA13: MOV EBX, 3
+SHL EBX, 4
+CMP EBX, 48
+JNZ PRUEBA14
+MOV [48], 1
+
+
+; 14. SHR logico: 0x80000000 >> 31 = 1
+PRUEBA14: MOV EBX, 0
+LDH EBX, -32768
+SHR EBX, 31
+CMP EBX, 1
+JNZ PRUEBA15
+MOV [52], 1
+
+
+; 15. SAR conserva el signo: -8 >> 1 = -4
+PRUEBA15: MOV EBX, -8
+SAR EBX, 1
+CMP EBX, -4
+JNZ PRUEBA16
+MOV [56], 1
+
+
+; 16. LDL y LDH conservan la otra mitad
+PRUEBA16: MOV EBX, 0
+LDH EBX, 4660
+LDL EBX, 22136
+MOV EEX, EBX
+SHR EEX, 16
+CMP EEX, 4660
+JNZ PRUEBA17
 MOV EFX, 0
-MOV EEX, 0
-PRIMERA: SYS 1
-CMP [EDX], 0
-JN SEGUNDA
-ADD EFX, [EDX]
-ADD EEX, 1
-JMP PRIMERA
-SEGUNDA: CMP EEX, 1
-JZ IMPRIMIR
-SYS 1
+LDL EFX, -1
+AND EBX, EFX
+CMP EBX, 22136
+JNZ PRUEBA17
+MOV [60], 1
+
+
+; 17. Memoria con desplazamiento negativo
+PRUEBA17: MOV [100], 77
+MOV EDX, DS
+ADD EDX, 104
+MOV EBX, [EDX-4]
+CMP EBX, 77
+JNZ PRUEBA18
+MOV [64], 1
+
+
+; 18. Carry en ADD: 0xFFFFFFFF + 1
+; Se comprueba JC antes de modificar CC.
+PRUEBA18: MOV EBX, -1
+ADD EBX, 1
+JC CARRY_OK
+JMP PRUEBA19
+
+CARRY_OK: JZ CERO_OK
+JMP PRUEBA19
+
+CERO_OK: MOV [68], 1
+
+
+; 19. Overflow: 2147483647 + 1
+PRUEBA19: MOV EBX, 0
+LDH EBX, 32767
+LDL EBX, -1
+ADD EBX, 1
+JV OVERFLOW_OK
+JMP PRUEBA20
+
+OVERFLOW_OK: JN NEGATIVO_OK
+JMP PRUEBA20
+
+NEGATIVO_OK: MOV [72], 1
+
+; 20. RND debe devolver un valor entre 0 y 10.
+; Se repite 20 veces.
+PRUEBA20: MOV EEX, 20
+
+REPETIR_RANDOM: RND EBX, 10
+CMP EBX, 0
+JN MOSTRAR
+CMP EBX, 10
+JP MOSTRAR
 SUB EEX, 1
-SUB EFX, [EDX]
-JMP SEGUNDA
-IMPRIMIR: MOV [EDX], EFX
-MOV EAX, 0x01
+JNZ REPETIR_RANDOM
+MOV [76], 1
+
+; Mostrar los 20 resultados en decimal
+MOSTRAR: MOV EAX, 1
+MOV EDX, DS
+MOV ECX, 0
 LDH ECX, 4
+LDL ECX, 20
+SYS 2
+
+; Prueba adicional: caracteres de varios bytes.
+; 16737 = 0x4161 = "Aa".
+; MOV escribe 4 bytes: 00 00 41 61.
+MOV [100], 16737
+MOV EDX, DS
+ADD EDX, 102
+MOV EAX, 2
+LDH ECX, 2
 LDL ECX, 1
 SYS 2
+
 STOP
-
-
