@@ -56,12 +56,22 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
     
     int desplazamiento;
     uint32_t direccionFisica;
+    uint16_t offset;
     uint8_t instruccion;
     // IP esta inicializado en 0 en cargador.c
     
+    uint16_t base = maquina->segmentos[0].base;
+    uint32_t limiteCS = maquina->segmentos[0].tamanio + base;
+
     while (maquina->registros[IP] != -1) {
         
-        verificaDirFisica(maquina, maquina->registros[IP], &direccionFisica, 1);
+        offset = maquina->registros[IP] & 0xFFFF;
+        direccionFisica = base + offset;
+
+        if (direccionFisica >= limiteCS) {
+            maquina->registros[IP] = -1;
+            exit(EXIT_SUCCESS);
+        }
 
         instruccion = maquina->memoria[direccionFisica];
 
