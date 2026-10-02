@@ -56,35 +56,30 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
     
     int desplazamiento;
     uint32_t direccionFisica;
-    uint16_t offset;
     uint8_t instruccion;
     // IP esta inicializado en 0 en cargador.c
     
     uint16_t base = maquina->segmentos[0].base;
     uint32_t limiteCS = maquina->segmentos[0].tamanio + base;
+    direccionFisica = calculaDirFisica(maquina, maquina->registros[IP]);
 
-    while (maquina->registros[IP] != -1) {
-        
-        offset = maquina->registros[IP] & 0xFFFF;
-        direccionFisica = base + offset;
-
-        if (direccionFisica >= limiteCS) {
-            maquina->registros[IP] = -1;
-            exit(EXIT_SUCCESS);
-        }
+    while (maquina->registros[IP] != -1 && direccionFisica < limiteCS) {
 
         instruccion = maquina->memoria[direccionFisica];
 
         desensamblaInstruccion(maquina, instruccion, &desplazamiento);
-        
-        maquina->registros[IP] += desplazamiento + 1;
 
+        maquina->registros[IP] += desplazamiento + 1;
+        
         if (maquina->registros[OPC] >= CANT_OPERACIONES || maquina->Operaciones[maquina->registros[OPC]] == NULL) {
             printf("Error: operación inválida\n");
             exit(EXIT_FAILURE);
         }
 
         maquina->Operaciones[maquina->registros[OPC]](maquina);
+
+        
+        direccionFisica = calculaDirFisica(maquina, maquina->registros[IP]);
     }
 
     printf("Fin de la ejecución\n");
