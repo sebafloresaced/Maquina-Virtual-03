@@ -7,13 +7,20 @@
 
 void inicializarMaquina(MaquinaVirtual *maquina) {
     int i;
-    
+
+    maquina->memoria = (uint8_t *) malloc(sizeof(uint8_t) * maquina->tamanioMemoria);
+
+    if (maquina->memoria == NULL) {
+        fprintf(stderr, "Error: no hay memoria suficiente\n");
+        exit(EXIT_FAILURE);
+    }
+
     for (i = 0; i < CANT_REGISTROS; i++) {
         maquina->registros[i] = 0;
     }
     for (i = 0; i < CANT_SEGMENTOS; i++) {
         maquina->segmentos[i].base = -1;
-        maquina->segmentos[i].tamanio = -1;
+        maquina->segmentos[i].tamanio = 0;
     }
     for (i = 0; i < CANT_OPERACIONES; i++) {
         maquina->Operaciones[i] = NULL;
@@ -59,8 +66,9 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
     uint8_t instruccion;
     // IP esta inicializado en 0 en cargador.c
     
-    uint16_t base = maquina->segmentos[0].base;
-    uint32_t limiteCS = maquina->segmentos[0].tamanio + base;
+    uint32_t base = maquina->segmentos[2].base;
+    uint32_t limiteCS = maquina->segmentos[2].tamanio + base;
+
     direccionFisica = calculaDirFisica(maquina, maquina->registros[IP]);
 
     while (maquina->registros[IP] != -1 && direccionFisica < limiteCS) {
@@ -78,8 +86,8 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
 
         maquina->Operaciones[maquina->registros[OPC]](maquina);
 
-        
         direccionFisica = calculaDirFisica(maquina, maquina->registros[IP]);
+
     }
 
     printf("Fin de la ejecución\n");
