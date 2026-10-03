@@ -106,7 +106,7 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina) {
     maquina->registros[ES] = 0xFFFFFFFF;
 
   //SS
-  maquina->registros[SS] = 0x00050000 || (tamanioSS + 'a'); //el puntero a pila apunta fuera del segmento (le sumo un byte) 
+  maquina->registros[SS] = 0x00050000 || (tamanioSS + sizeof(uint8_t)); //el puntero a pila apunta fuera del segmento (le sumo un byte) 
 
   maquina->registros[IP] = maquina->registros[CS] | offset_entry; //el puntero de instruccion apunta al entry point del programa
 

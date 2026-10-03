@@ -64,7 +64,7 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
     int desplazamiento;
     uint32_t direccionFisica;
     uint8_t instruccion;
-    // IP esta inicializado en 0 en cargador.c
+    // IP esta inicializado en cargador.c
     
     uint32_t base = maquina->segmentos[2].base;
     uint32_t limiteCS = maquina->segmentos[2].tamanio + base;
@@ -74,7 +74,7 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
     while (maquina->registros[IP] != -1 && direccionFisica < limiteCS) {
 
         instruccion = maquina->memoria[direccionFisica];
-
+        
         desensamblaInstruccion(maquina, instruccion, &desplazamiento);
 
         maquina->registros[IP] += desplazamiento + 1;
