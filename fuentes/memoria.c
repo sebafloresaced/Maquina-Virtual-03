@@ -6,16 +6,8 @@
 uint32_t calculaDirFisica(MaquinaVirtual *maquina, uint32_t direccionLogica)
 {
     uint32_t segmento = direccionLogica >> 16;
-    uint32_t base;
+    uint32_t base = maquina->segmentos[segmento].base;
     uint32_t offset = direccionLogica & 0xFFFF;
-
-    if (segmento >= CANT_SEGMENTOS ||
-        maquina->segmentos[segmento].base == UINT32_MAX ||
-        maquina->segmentos[segmento].tamanio == UINT32_MAX) {
-        fprintf(stderr, "Error: Fallo de segmento (acceso a segmento invalido)\n");
-        exit(EXIT_FAILURE);
-    }
-    base = maquina->segmentos[segmento].base;
 
     return base+offset;
 }
