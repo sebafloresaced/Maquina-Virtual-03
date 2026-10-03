@@ -116,8 +116,8 @@ static void obtieneOperando(Operando OP, st15 nombre) {
 
 void desensamblador(MaquinaVirtual maquina) {
     
-    uint32_t inicio = maquina.segmentos[0].base;
-    uint32_t fin = inicio + maquina.segmentos[0].tamanio;
+    uint32_t inicio = maquina.segmentos[2].base;
+    uint32_t fin = inicio + maquina.segmentos[2].tamanio;
     int desplazamiento;
     st15 operando1, operando2, operacion;
 
