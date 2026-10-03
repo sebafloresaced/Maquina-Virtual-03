@@ -6,15 +6,23 @@
 uint32_t calculaDirFisica(MaquinaVirtual *maquina, uint32_t direccionLogica)
 {
     uint32_t segmento = direccionLogica >> 16;
-    uint16_t base = maquina->segmentos[segmento].base;
-    uint16_t offset = direccionLogica & 0xFFFF;
+    uint32_t base;
+    uint32_t offset = direccionLogica & 0xFFFF;
+
+    if (segmento >= CANT_SEGMENTOS ||
+        maquina->segmentos[segmento].base == UINT32_MAX ||
+        maquina->segmentos[segmento].tamanio == UINT32_MAX) {
+        fprintf(stderr, "Error: Fallo de segmento (acceso a segmento invalido)\n");
+        exit(EXIT_FAILURE);
+    }
+    base = maquina->segmentos[segmento].base;
 
     return base+offset;
 }
 
 void verificaDirFisica(MaquinaVirtual *maquina, uint32_t direccionFisica, uint16_t bytesAcceso)
 {
-    uint16_t segmento;
+    uint32_t segmento;
     uint32_t limiteSegmento, limiteAcceso, base;
     uint32_t direccionLogica = maquina->registros[LAR];
     
@@ -22,7 +30,9 @@ void verificaDirFisica(MaquinaVirtual *maquina, uint32_t direccionFisica, uint16
 
     segmento = direccionLogica >> 16;
     
-    if ((segmento >= CANT_SEGMENTOS)  || (maquina->segmentos[segmento].base == -1 || maquina->segmentos[segmento].tamanio == -1)) // segmento invalido
+    if (segmento >= CANT_SEGMENTOS ||
+        maquina->segmentos[segmento].base == UINT32_MAX ||
+        maquina->segmentos[segmento].tamanio == UINT32_MAX)
        {
         printf("Error: Fallo de segmento (acceso a segmento de memoria invalido)");
         exit(EXIT_FAILURE);
@@ -33,7 +43,8 @@ void verificaDirFisica(MaquinaVirtual *maquina, uint32_t direccionFisica, uint16
 
     limiteAcceso = direccionFisica + bytesAcceso;
 
-    if (!(direccionFisica >= base && limiteAcceso <= limiteSegmento))
+    if (!(direccionFisica >= base && limiteAcceso <= limiteSegmento &&
+          limiteAcceso <= maquina->tamanioMemoria))
     {
         printf("Error: Fallo de segmento (fuera de los limites del segmento)");
         exit(EXIT_FAILURE);
