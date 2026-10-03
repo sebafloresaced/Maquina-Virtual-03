@@ -26,7 +26,7 @@ static void leeArgumentos(int argc, char *argv[], const char **rutaArchivoVmx,
             *disassemblerFlag = 1;
         else 
             if (strncmp(argv[i], "m=", 2) == 0) 
-                *memoria = strtol(argv[i] + 2, NULL, 10) * 1024;
+                *memoria = strtol(argv[i] + 2, NULL, 10) * 1024; //el parametro esta en KiB por eso se multiplica por 1024
             
             else 
                 if (*rutaArchivoVmx != NULL && strcmp(argv[i], "-p") == 0)
