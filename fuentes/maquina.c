@@ -7,13 +7,20 @@
 
 void inicializarMaquina(MaquinaVirtual *maquina) {
     int i;
-    
+
+    maquina->memoria = (uint8_t *) malloc(sizeof(uint8_t) * maquina->tamanioMemoria);
+
+    if (maquina->memoria == NULL) {
+        fprintf(stderr, "Error: no hay memoria suficiente\n");
+        exit(EXIT_FAILURE);
+    }
+
     for (i = 0; i < CANT_REGISTROS; i++) {
         maquina->registros[i] = 0;
     }
     for (i = 0; i < CANT_SEGMENTOS; i++) {
         maquina->segmentos[i].base = -1;
-        maquina->segmentos[i].tamanio = -1;
+        maquina->segmentos[i].tamanio = 0;
     }
     for (i = 0; i < CANT_OPERACIONES; i++) {
         maquina->Operaciones[i] = NULL;
@@ -56,35 +63,31 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
     
     int desplazamiento;
     uint32_t direccionFisica;
-    uint16_t offset;
     uint8_t instruccion;
-    // IP esta inicializado en 0 en cargador.c
+    // IP esta inicializado en cargador.c
     
-    uint16_t base = maquina->segmentos[0].base;
-    uint32_t limiteCS = maquina->segmentos[0].tamanio + base;
+    uint32_t base = maquina->segmentos[2].base;
+    uint32_t limiteCS = maquina->segmentos[2].tamanio + base;
 
-    while (maquina->registros[IP] != -1) {
-        
-        offset = maquina->registros[IP] & 0xFFFF;
-        direccionFisica = base + offset;
+    direccionFisica = calculaDirFisica(maquina, maquina->registros[IP]);
 
-        if (direccionFisica >= limiteCS) {
-            maquina->registros[IP] = -1;
-            exit(EXIT_SUCCESS);
-        }
+    while (maquina->registros[IP] != -1 && direccionFisica < limiteCS) {
 
         instruccion = maquina->memoria[direccionFisica];
-
-        desensamblaInstruccion(maquina, instruccion, &desplazamiento);
         
-        maquina->registros[IP] += desplazamiento + 1;
+        desensamblaInstruccion(maquina, instruccion, &desplazamiento);
 
+        maquina->registros[IP] += desplazamiento + 1;
+        
         if (maquina->registros[OPC] >= CANT_OPERACIONES || maquina->Operaciones[maquina->registros[OPC]] == NULL) {
             printf("Error: operación inválida\n");
             exit(EXIT_FAILURE);
         }
 
         maquina->Operaciones[maquina->registros[OPC]](maquina);
+
+        direccionFisica = calculaDirFisica(maquina, maquina->registros[IP]);
+
     }
 
     printf("Fin de la ejecución\n");

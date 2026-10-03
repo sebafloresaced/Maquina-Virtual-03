@@ -26,7 +26,10 @@ void escribirDatos(MaquinaVirtual *maquina)
 
     for (unsigned int i = 0; i < cantidad; i++) {
         maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
-        verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
+
+        direccionFisica = calculaDirFisica(maquina, maquina->registros[LAR]);
+        verificaDirFisica(maquina, direccionFisica, tamanio);
+        
         maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
         leerMemoria(maquina);
         printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt de direccion fisica
@@ -69,7 +72,10 @@ void leerDatos(MaquinaVirtual *maquina)
         case DECIMAL: 
             for (unsigned int i = 0; i < cantidad; i++) {
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
-                verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
+
+                direccionFisica = calculaDirFisica(maquina, maquina->registros[LAR]);
+                verificaDirFisica(maquina, direccionFisica, tamanio);
+
                 maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
 
                 printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt
@@ -81,7 +87,10 @@ void leerDatos(MaquinaVirtual *maquina)
             char caracter;
             for (unsigned int i = 0; i < cantidad; i++) {
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
-                verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
+
+                direccionFisica = calculaDirFisica(maquina, maquina->registros[LAR]);
+                verificaDirFisica(maquina, direccionFisica, tamanio);
+
                 maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
                 
                 printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt
@@ -93,7 +102,10 @@ void leerDatos(MaquinaVirtual *maquina)
         case OCTAL: 
             for (unsigned int i = 0; i < cantidad; i++) {
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
-                verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
+
+                direccionFisica = calculaDirFisica(maquina, maquina->registros[LAR]);
+                verificaDirFisica(maquina, direccionFisica, tamanio);
+                
                 maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
                 
                 printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt
@@ -104,7 +116,10 @@ void leerDatos(MaquinaVirtual *maquina)
         case BINARIO: 
             for (unsigned int i = 0; i < cantidad; i++) {
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
-                verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
+
+                direccionFisica = calculaDirFisica(maquina, maquina->registros[LAR]);
+                verificaDirFisica(maquina, direccionFisica, tamanio);
+                
                 maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
                 
                 printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt
@@ -115,7 +130,10 @@ void leerDatos(MaquinaVirtual *maquina)
         case HEXADECIMAL: 
             for (unsigned int i = 0; i < cantidad; i++) {
                 maquina->registros[LAR] = maquina->registros[EDX] + i * tamanio;
-                verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, tamanio);
+
+                direccionFisica = calculaDirFisica(maquina, maquina->registros[LAR]);
+                verificaDirFisica(maquina, direccionFisica, tamanio);
+
                 maquina->registros[MAR] = (tamanio << 16) | direccionFisica;
                 
                 printf("[%04X]: ", maquina->registros[MAR] & 0xFFFF); // prompt

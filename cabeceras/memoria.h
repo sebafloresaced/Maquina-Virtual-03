@@ -6,7 +6,8 @@
 #include <stdint.h>
 #include "maquina.h"
 
-void verificaDirFisica(MaquinaVirtual *, uint32_t, uint32_t *, uint16_t);
+uint32_t calculaDirFisica(MaquinaVirtual *, uint32_t);
+void verificaDirFisica(MaquinaVirtual *, uint32_t, uint16_t);
 void leerMemoria(MaquinaVirtual *);
 void escribirMemoria(MaquinaVirtual *);
 
