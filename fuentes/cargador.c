@@ -110,3 +110,37 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina) {
 
   fclose(archivo);
 }
+
+static int terminaEn(const char *texto, const char *extension) {
+    size_t longitud = strlen(texto);
+    size_t longitudExtension = strlen(extension);
+    return longitud >= longitudExtension &&
+           strcmp(texto + longitud - longitudExtension, extension) == 0;
+}
+
+void leeArgumentos(int argc, char *argv[], const char **rutaArchivoVmx, const char **rutaArchivoVmi, uint32_t *memoria, int *disassemblerFlag, int *paramSegmentFlag, int *inicioParametros) {
+    *rutaArchivoVmx = NULL;
+    *rutaArchivoVmi = NULL;
+
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "-d") == 0)
+            *disassemblerFlag = 1;
+        else 
+            if (strncmp(argv[i], "m=", 2) == 0) 
+                *memoria = strtol(argv[i] + 2, NULL, 10) * 1024; //el parametro esta en KiB por eso se multiplica por 1024
+            
+            else 
+                if (*rutaArchivoVmx != NULL && strcmp(argv[i], "-p") == 0) {
+                    *paramSegmentFlag = 1;
+                    *inicioParametros = i + 1; 
+                    break;
+                }
+                else 
+                    if (terminaEn(argv[i], ".vmx"))
+                        *rutaArchivoVmx = argv[i];
+                    else 
+                        if (terminaEn(argv[i], ".vmi")) 
+                            *rutaArchivoVmi = argv[i];
+    }
+
+}
