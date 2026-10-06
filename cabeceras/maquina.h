@@ -34,8 +34,8 @@
 #define PS 31
 
 typedef struct {
-    uint32_t base;
-    uint32_t tamanio;
+    int16_t base; // para poder setearlo en -1 si no existe el segmento
+    uint16_t tamanio; // si no existe el segmento, su tamaño es 0
 } DescriptorSegmento;
 
 typedef struct MaquinaVirtual MaquinaVirtual;
