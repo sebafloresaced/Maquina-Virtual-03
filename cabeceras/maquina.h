@@ -7,7 +7,7 @@
 
 #define TAM_MEMORIA_POR_DEFECTO 16384 // 16 Kib
 #define CANT_REGISTROS 32
-#define CANT_SEGMENTOS 6
+#define CANT_SEGMENTOS 8
 #define CANT_OPERACIONES 32
 
 // Indices de los registros
@@ -34,8 +34,8 @@
 #define PS 31
 
 typedef struct {
-    uint32_t base;
-    uint32_t tamanio;
+    int16_t base; // para poder setearlo en -1 si no existe el segmento
+    uint16_t tamanio; // si no existe el segmento, su tamaño es 0
 } DescriptorSegmento;
 
 typedef struct MaquinaVirtual MaquinaVirtual;
