@@ -55,6 +55,10 @@ void inicializarMaquina(MaquinaVirtual *maquina) {
     maquina->Operaciones[JNN] = operacionJNN;
     maquina->Operaciones[JNZ] = operacionJNZ;
     maquina->Operaciones[NOT] = operacionNOT;
+    maquina->Operaciones[PUSH] = operacionPUSH;
+    maquina->Operaciones[POP] = operacionPOP;
+    maquina->Operaciones[CALL] = operacionCALL;
+    maquina->Operaciones[RET] = operacionRET;
 
     maquina->Operaciones[STOP] = operacionSTOP;
 }
@@ -85,6 +89,11 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
         }
 
         maquina->Operaciones[maquina->registros[OPC]](maquina);
+
+        // STOP o RET de main pueden dejar IP en -1.
+        if (maquina->registros[IP] == -1) {
+            break;
+        }
 
         direccionFisica = calculaDirFisica(maquina, maquina->registros[IP]);
 
