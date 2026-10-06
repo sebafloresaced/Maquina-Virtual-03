@@ -64,7 +64,7 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina) {
   // Si un segmento no existe, su tamaño quedo en 0 y no ocupa entradas en la tabla de segmentos.
 
   //Const Segment (puede no existir)
-  if (tamanio.KS > 0) {
+  if (tamanioKS > 0) {
     maquina->segmentos[segmentosUso].base = tamañoPS;
     maquina->segmentos[segmentosUso].tamanio = tamanioKS;
     maquina->registros[KS] = (segmentosUso << 16); // el puntero de segmento apunta al inicio del segmento KS
@@ -104,7 +104,18 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina) {
     segmentosUso++;
   }
 
-  fread(maquina->memoria + maquina->segmentos[2].base, 1, tamanioCS, archivo);
+  uint32_t indiceCS = (uint32_t)maquina->registros[CS] >> 16;
+  if (indiceCS >= CANT_SEGMENTOS || maquina->segmentos[indiceCS].base < 0) {
+    fprintf(stderr, "Error: descriptor de segmento de codigo invalido\n");
+    fclose(archivo);
+    exit(EXIT_FAILURE);
+  }
+
+  if (fread(maquina->memoria + maquina->segmentos[indiceCS].base, 1, tamanioCS, archivo) != tamanioCS) {
+    fprintf(stderr, "Error: no se pudo leer el segmento de codigo completo\n");
+    fclose(archivo);
+    exit(EXIT_FAILURE);
+  }
 
   maquina->registros[IP] = maquina->registros[CS] | offset_entry; //el puntero de instruccion apunta al entry point del programa
 
