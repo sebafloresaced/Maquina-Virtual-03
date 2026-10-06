@@ -70,8 +70,9 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
     uint8_t instruccion;
     // IP esta inicializado en cargador.c
     
-    uint32_t base = maquina->segmentos[2].base;
-    uint32_t limiteCS = maquina->segmentos[2].tamanio + base;
+    uint32_t indiceCS = (uint32_t)maquina->registros[CS] >> 16;
+    uint32_t base = maquina->segmentos[indiceCS].base;
+    uint32_t limiteCS = maquina->segmentos[indiceCS].tamanio + base;
 
     direccionFisica = calculaDirFisica(maquina, maquina->registros[IP]);
 
