@@ -3,16 +3,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void verificaDirFisica(MaquinaVirtual *maquina, uint32_t direccionLogica, uint32_t *direccionFisica, uint16_t bytesAcceso)
+uint32_t calculaDirFisica(MaquinaVirtual *maquina, uint32_t direccionLogica)
 {
-    uint16_t offset, segmento;
+    uint32_t segmento = direccionLogica >> 16;
+    uint32_t base = maquina->segmentos[segmento].base;
+    uint32_t offset = direccionLogica & 0xFFFF;
+
+    return base+offset;
+}
+
+void verificaDirFisica(MaquinaVirtual *maquina, uint32_t direccionFisica, uint16_t bytesAcceso)
+{
+    uint32_t segmento;
     uint32_t limiteSegmento, limiteAcceso, base;
+    uint32_t direccionLogica = maquina->registros[LAR];
     
     //compruebo que el segmento es valido y que el acceso a memoria no se sale de los limites del segmento
 
     segmento = direccionLogica >> 16;
     
-    if ((segmento >= CANT_SEGMENTOS)  || (maquina->segmentos[segmento].base == -1 || maquina->segmentos[segmento].tamanio == -1)) // segmento invalido
+    if (segmento >= CANT_SEGMENTOS ||
+        maquina->segmentos[segmento].base == UINT32_MAX ||
+        maquina->segmentos[segmento].tamanio == UINT32_MAX)
        {
         printf("Error: Fallo de segmento (acceso a segmento de memoria invalido)");
         exit(EXIT_FAILURE);
@@ -20,12 +32,11 @@ void verificaDirFisica(MaquinaVirtual *maquina, uint32_t direccionLogica, uint32
 
     base = maquina->segmentos[segmento].base;
     limiteSegmento = maquina->segmentos[segmento].tamanio + base;
-    offset = direccionLogica & 0xFFFF;
 
-    *direccionFisica = base + offset;
-    limiteAcceso = *direccionFisica + bytesAcceso;
+    limiteAcceso = direccionFisica + bytesAcceso;
 
-    if (!(*direccionFisica >= base && limiteAcceso <= limiteSegmento))
+    if (!(direccionFisica >= base && limiteAcceso <= limiteSegmento &&
+          limiteAcceso <= maquina->tamanioMemoria))
     {
         printf("Error: Fallo de segmento (fuera de los limites del segmento)");
         exit(EXIT_FAILURE);
@@ -40,7 +51,8 @@ void leerMemoria(MaquinaVirtual *maquina)
     uint16_t bytesAcceso = (maquina->registros[MAR] >> 16);
     int i;
 
-    verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, bytesAcceso);
+    direccionFisica = calculaDirFisica(maquina, maquina->registros[LAR]);
+    verificaDirFisica(maquina, direccionFisica, bytesAcceso);
 
     maquina->registros[MAR] = ((uint32_t)bytesAcceso << 16) | direccionFisica;
     
@@ -58,7 +70,8 @@ void escribirMemoria(MaquinaVirtual *maquina)
     uint16_t bytesAcceso = (maquina->registros[MAR] >> 16);
     int i;
 
-    verificaDirFisica(maquina, maquina->registros[LAR], &direccionFisica, bytesAcceso);
+    direccionFisica = calculaDirFisica(maquina, maquina->registros[LAR]);
+    verificaDirFisica(maquina, direccionFisica, bytesAcceso);
 
     maquina->registros[MAR] = ((uint32_t)bytesAcceso << 16) | direccionFisica; 
 
