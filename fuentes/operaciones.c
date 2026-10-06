@@ -4,6 +4,28 @@
 #include "../cabeceras/memoria.h"
 #include "../cabeceras/llamadas_sistema.h"
 
+
+static void verificaUnderflow(MaquinaVirtual *maquina, uint32_t bytesAAcceder) {
+    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
+    uint32_t tamanioSS = maquina->segmentos[indiceSS].tamanio;
+    uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
+
+    if (tamanioSS - offsetSP < bytesAAcceder) {
+        printf("Error: STACK UNDERFLOW\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+static void verificaOverflow(MaquinaVirtual *maquina, uint32_t bytesAAcceder) {
+    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
+    uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
+
+    if (offsetSP < bytesAAcceder) {
+        printf("Error: STACK OVERFLOW\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
 static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
 {
     uint8_t tipo = op >> 24;
@@ -446,14 +468,8 @@ void operacionNOT(MaquinaVirtual *maquina)
 
 void operacionPUSH(MaquinaVirtual *maquina)
 {
-    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
-    uint32_t tamanioSS = maquina->segmentos[indiceSS].tamanio;
-    uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
-
-    if (offsetSP < 4) {
-        printf("Error: STACK OVERFLOW\n");
-        exit(EXIT_FAILURE);
-    }
+    
+    verificaOverflow(maquina, 4); // Verifico que haya espacio en la pila para guardar el valor
 
     maquina->registros[SP] -= 4;
     uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
@@ -466,14 +482,8 @@ void operacionPUSH(MaquinaVirtual *maquina)
 
 void operacionPOP(MaquinaVirtual *maquina)
 {
-    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
-    uint32_t tamanioSS = maquina->segmentos[indiceSS].tamanio;
-    uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
-
-    if (tamanioSS - offsetSP < 4) {
-        printf("Error: STACK UNDERFLOW\n");
-        exit(EXIT_FAILURE);
-    }
+    
+    verificaUnderflow(maquina, 4); // Verifico que haya al menos 4 bytes en la pila para leer el valor
 
     maquina->registros[LAR] = maquina->registros[SP];
     maquina->registros[MAR] = 4 << 16;
@@ -487,14 +497,7 @@ void operacionPOP(MaquinaVirtual *maquina)
 
 void operacionCALL(MaquinaVirtual *maquina)
 {
-    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
-    uint32_t tamanioSS = maquina->segmentos[indiceSS].tamanio;
-    uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
-
-    if (offsetSP < 4) {
-        printf("Error: STACK OVERFLOW\n");
-        exit(EXIT_FAILURE);
-    }
+    verificaOverflow(maquina, 4); // Verifico que haya espacio en la pila para guardar la dirección de retorno
 
     maquina->registros[SP] -= 4;
 
@@ -511,15 +514,9 @@ void operacionCALL(MaquinaVirtual *maquina)
 
 void operacionRET(MaquinaVirtual *maquina)
 {
-    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
-    uint32_t tamanioSS = maquina->segmentos[indiceSS].tamanio;
-    uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
 
-    if (tamanioSS - offsetSP < 4) {
-        printf("Error: STACK UNDERFLOW\n");
-        exit(EXIT_FAILURE);
-    }
-
+    verificaUnderflow(maquina, 4); // Verifico que haya al menos 4 bytes en la pila para leer la dirección de retorno
+  
     // Recupero la dirección de retorno desde la pila
     maquina->registros[LAR] = maquina->registros[SP];
     maquina->registros[MAR] = 4 << 16;
