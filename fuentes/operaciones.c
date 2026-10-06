@@ -446,17 +446,37 @@ void operacionNOT(MaquinaVirtual *maquina)
 
 void operacionPUSH(MaquinaVirtual *maquina)
 {
-    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
+    uint32_t tamanioSS = maquina->segmentos[indiceSS].tamanio;
+    uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
+
+    if (offsetSP < 4) {
+        printf("Error: STACK OVERFLOW\n");
+        exit(EXIT_FAILURE);
+    }
 
     maquina->registros[SP] -= 4;
+    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+
     maquina->registros[LAR] = maquina->registros[SP];
+    maquina->registros[MAR] = 4 << 16;
     maquina->registros[MBR] = valor;
     escribirMemoria(maquina);
 }
 
 void operacionPOP(MaquinaVirtual *maquina)
 {
+    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
+    uint32_t tamanioSS = maquina->segmentos[indiceSS].tamanio;
+    uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
+
+    if (tamanioSS - offsetSP < 4) {
+        printf("Error: STACK UNDERFLOW\n");
+        exit(EXIT_FAILURE);
+    }
+
     maquina->registros[LAR] = maquina->registros[SP];
+    maquina->registros[MAR] = 4 << 16;
     leerMemoria(maquina);
     uint32_t valor = maquina->registros[MBR];
 
@@ -467,22 +487,42 @@ void operacionPOP(MaquinaVirtual *maquina)
 
 void operacionCALL(MaquinaVirtual *maquina)
 {
-    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
+    uint32_t tamanioSS = maquina->segmentos[indiceSS].tamanio;
+    uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
+
+    if (offsetSP < 4) {
+        printf("Error: STACK OVERFLOW\n");
+        exit(EXIT_FAILURE);
+    }
+
+    maquina->registros[SP] -= 4;
 
     // Guardo la dirección de retorno en la pila
-    maquina->registros[SP] -= 4;
     maquina->registros[LAR] = maquina->registros[SP];
+    maquina->registros[MAR] = 4 << 16;
     maquina->registros[MBR] = maquina->registros[IP];
     escribirMemoria(maquina);
 
     // Salto a la dirección de destino
-    maquina->registros[IP] = valor;
+    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+    maquina->registros[IP] = (uint32_t)maquina->registros[CS] + (valor & 0xFFFF); // consultar si el traductor da solo el offset o da la direccion logica completa
 }
 
 void operacionRET(MaquinaVirtual *maquina)
 {
+    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
+    uint32_t tamanioSS = maquina->segmentos[indiceSS].tamanio;
+    uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
+
+    if (tamanioSS - offsetSP < 4) {
+        printf("Error: STACK UNDERFLOW\n");
+        exit(EXIT_FAILURE);
+    }
+
     // Recupero la dirección de retorno desde la pila
     maquina->registros[LAR] = maquina->registros[SP];
+    maquina->registros[MAR] = 4 << 16;
     leerMemoria(maquina);
     uint32_t direccionRetorno = maquina->registros[MBR];
 
