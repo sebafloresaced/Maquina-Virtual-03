@@ -7,7 +7,7 @@
 
 #define TAM_MEMORIA_POR_DEFECTO 16384 // 16 Kib
 #define CANT_REGISTROS 32
-#define CANT_SEGMENTOS 6
+#define CANT_SEGMENTOS 8
 #define CANT_OPERACIONES 32
 
 // Indices de los registros
