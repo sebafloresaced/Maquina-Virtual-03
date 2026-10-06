@@ -41,6 +41,10 @@
 #define JNN 0x08
 #define JNZ 0x09
 #define NOT 0x0A
+#define PUSH 0x0B
+#define POP 0x0C
+#define CALL 0x0D
+#define RET 0x0E
 
 #define STOP 0x0F
 
@@ -73,6 +77,10 @@ void operacionJNP(MaquinaVirtual *);
 void operacionJNN(MaquinaVirtual *);
 void operacionJNZ(MaquinaVirtual *);
 void operacionNOT(MaquinaVirtual *);
+void operacionPUSH(MaquinaVirtual *);
+void operacionPOP(MaquinaVirtual *);
+void operacionCALL(MaquinaVirtual *);
+void operacionRET(MaquinaVirtual *);
 void operacionSTOP(MaquinaVirtual *);
 
 #endif
