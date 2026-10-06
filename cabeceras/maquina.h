@@ -5,9 +5,9 @@
 
 #include <stdint.h> // define tipos enteros de ancho fijo
 
-#define TAM_MEMORIA 16384 // 16 Kib
+#define TAM_MEMORIA_POR_DEFECTO 16384 // 16 Kib
 #define CANT_REGISTROS 32
-#define CANT_SEGMENTOS 8
+#define CANT_SEGMENTOS 6
 #define CANT_OPERACIONES 32
 
 // Indices de los registros
@@ -28,10 +28,14 @@
 #define CC  17
 #define CS  26
 #define DS  27
+#define ES  28
+#define SS  29
+#define KS 30
+#define PS 31
 
 typedef struct {
-    int16_t base;
-    int16_t tamanio;
+    uint32_t base;
+    uint32_t tamanio;
 } DescriptorSegmento;
 
 typedef struct MaquinaVirtual MaquinaVirtual;
@@ -39,7 +43,8 @@ typedef struct MaquinaVirtual MaquinaVirtual;
 typedef void(*Operacion)(MaquinaVirtual *);
 
 struct MaquinaVirtual {
-    uint8_t memoria[TAM_MEMORIA];
+    uint8_t *memoria;
+    uint32_t tamanioMemoria;
     int32_t registros[CANT_REGISTROS];
     DescriptorSegmento segmentos[CANT_SEGMENTOS];
     Operacion Operaciones[CANT_OPERACIONES];
