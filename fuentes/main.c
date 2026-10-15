@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     MaquinaVirtual maquina;
     int disassemblerFlag = 0;
     int paramSegmentFlag = 0;
-    int inicioParametros = -1;
+    int inicioParametros = argc;
 
     const char *rutaArchivoVmx;
     const char *rutaArchivoVmi;
