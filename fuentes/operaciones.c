@@ -456,7 +456,6 @@ void operacionNOT(MaquinaVirtual *maquina)
 
 void operacionPUSH(MaquinaVirtual *maquina)
 {
-    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
     uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
 
     if (offsetSP < 4) {
@@ -496,7 +495,6 @@ void operacionPOP(MaquinaVirtual *maquina)
 
 void operacionCALL(MaquinaVirtual *maquina)
 {
-    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
     uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
 
     if (offsetSP < 4) {
