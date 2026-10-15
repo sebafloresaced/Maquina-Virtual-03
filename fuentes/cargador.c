@@ -25,8 +25,12 @@ static void leerEncabezado(FILE *archivo, uint32_t memoria, uint16_t *tamanioCS,
     *offset_entry = leer16(archivo);
   }
   else
-     if (version == 1) 
-        *tamanioDS = memoria - *tamanioCS;
+    if (version == 1) 
+      *tamanioDS = memoria - *tamanioCS;
+    else {
+      exit(EXIT_FAILURE);
+      printf("Error: Version invalida");
+    }
 }
 
 void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina) {
@@ -60,15 +64,21 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina) {
   if (tamañoPS > 0) {
     segmentosUso++;
   }
+  else {
+    maquina->registros[PS] = -1;
+  }
 
   // Si un segmento no existe, su tamaño quedo en 0 y no ocupa entradas en la tabla de segmentos.
 
   //Const Segment (puede no existir)
-  if (tamanio.KS > 0) {
+  if (tamanioKS > 0) {
     maquina->segmentos[segmentosUso].base = tamañoPS;
     maquina->segmentos[segmentosUso].tamanio = tamanioKS;
     maquina->registros[KS] = (segmentosUso << 16); // el puntero de segmento apunta al inicio del segmento KS
     segmentosUso++;
+  }
+  else {
+    maquina->registros[KS] = -1;
   }
 
   //Code Segment (siempre existe)
@@ -86,6 +96,9 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina) {
     maquina->registros[DS] = (segmentosUso << 16); // el puntero de segmento apunta al inicio del segmento DS
     segmentosUso++;
   }
+  else {
+    maquina->registros[DS] = -1;
+  }
 
   //Extra Segment (puede no existir)
   if (tamanioES > 0) {
@@ -93,6 +106,9 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina) {
     maquina->segmentos[segmentosUso].tamanio = tamanioES;
     maquina->registros[ES] = (segmentosUso << 16); // el puntero de segmento apunta al inicio del segmento ES
     segmentosUso++;
+  }
+  else {
+    maquina->registros[ES] = -1;
   }
     
   //Stack Segment (existe siempre)
@@ -104,7 +120,8 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina) {
     segmentosUso++;
   }
 
-  fread(maquina->memoria + maquina->segmentos[2].base, 1, tamanioCS, archivo);
+  uint32_t indiceCS = (uint32_t)maquina->registros[CS] >> 16;
+  fread(maquina->memoria + maquina->segmentos[indiceCS].base, 1, tamanioCS, archivo);
 
   maquina->registros[IP] = maquina->registros[CS] | offset_entry; //el puntero de instruccion apunta al entry point del programa
 
