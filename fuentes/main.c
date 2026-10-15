@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     int disassemblerFlag = 0;
     int paramSegmentFlag = 0;
     int inicioParametros = argc;
-    int version;
+    uint8_t version;
 
     const char *rutaArchivoVmx;
     const char *rutaArchivoVmi;
