@@ -28,16 +28,8 @@ int main(int argc, char *argv[]) {
     
     inicializarMaquina(&maquina);
 
-    uint32_t cantidadArgumentos = 0;
-    uint32_t direccionArgv = UINT32_MAX;
-
     if (rutaArchivoVmx != NULL) {
-        cargarParamSegment(&maquina, rutaArchivoVmx, cantidadParametros, argv + inicioParametros, &cantidadArgumentos, &direccionArgv);
-        cargarPrograma(rutaArchivoVmx, &maquina, &version);
-
-        if (version == 2) {
-            inicializarPila(&maquina, cantidadArgumentos, direccionArgv);
-        }
+        cargarPrograma(rutaArchivoVmx, &maquina, &version, cantidadParametros, argv + inicioParametros);
     }
     /*else 
         if (rutaArchivoVmi != NULL)

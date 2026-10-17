@@ -34,7 +34,7 @@ static void leerEncabezado(FILE *archivo, uint32_t memoria, uint16_t *tamanioCS,
     }
 }
 
-void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t *version) {
+void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t *version, int cantidadParametros, char *parametros[]) {
   FILE *archivo;
   uint16_t tamanioCS = 0, tamanioDS = 0, tamanioES = 0, tamanioSS = 0, tamanioKS = 0, offset_entry = 0; 
 
@@ -47,6 +47,13 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t 
 
   leerEncabezado(archivo, maquina->tamanioMemoria, &tamanioCS, &tamanioDS, &tamanioES, &tamanioSS, &tamanioKS, &offset_entry, version);
   
+  uint32_t cantidadArgumentos = 0;
+  uint32_t direccionArgv = UINT32_MAX;
+
+  if (*version == 2) {
+    cargarParamSegment(maquina, nombreArchivo, cantidadParametros, parametros, &cantidadArgumentos, &direccionArgv);\
+    inicializarPila(maquina, cantidadArgumentos, direccionArgv);
+  }
 
   // ------ CONFIGURA SEGMENTOS Y REGISTROS ---------
 
@@ -180,7 +187,7 @@ void leeArgumentos(int argc, char *argv[], const char **rutaArchivoVmx, const ch
 
 }
 
-void cargarParamSegment(MaquinaVirtual *maquina, const char *nombrePrograma, int cantidadParametros, char *parametros[], uint32_t *cantidadArgumentos, uint32_t *direccionArgv) {
+static void cargarParamSegment(MaquinaVirtual *maquina, const char *nombrePrograma, int cantidadParametros, char *parametros[], uint32_t *cantidadArgumentos, uint32_t *direccionArgv) {
     maquina->registros[PS] = -1;
     *cantidadArgumentos = 0;
     *direccionArgv = UINT32_MAX;
@@ -238,7 +245,7 @@ void cargarParamSegment(MaquinaVirtual *maquina, const char *nombrePrograma, int
     *direccionArgv = offsetArgv;
 }
 
-void inicializarPila(MaquinaVirtual *maquina, uint32_t cantidadArgumentos, uint32_t direccionArgv)
+static void inicializarPila(MaquinaVirtual *maquina, uint32_t cantidadArgumentos, uint32_t direccionArgv)
 {
     uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
 
