@@ -4,6 +4,16 @@
 #include "../cabeceras/memoria.h"
 #include "../cabeceras/llamadas_sistema.h"
 
+static uint32_t sectorRegistro(uint8_t opregistro, int *desplazamiento){
+    uint8_t sector = (opregistro >> 5) & 0x03;
+    switch (sector) 
+    {
+    case 0: *desplazamiento = 0; return 0xFFFFFFFF; //EAX
+    case 1: *desplazamiento = 24; return 0xFF000000; //AL
+    case 2: *desplazamiento = 16; return 0x00FF0000; //AH
+    case 3: *desplazamiento = 0; return 0x0000FFFF; //AX
+    }   
+}
 
 static void verificaUnderflow(MaquinaVirtual *maquina, uint32_t bytesAAcceder) {
     uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
@@ -33,8 +43,11 @@ static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
     {
         case REGISTRO:
         {
-            uint8_t nroregistro = op & 0x1F;
-            return maquina->registros[nroregistro];
+            uint8_t descriptor = (uint8_t) op;
+            uint8_t nroregistro = descriptor & 0x1F;
+            int desplazamiento;
+            uint32_t mascara = sectorRegistro(op, &desplazamiento);
+            return (maquina->registros[nroregistro] & mascara) >> desplazamiento;
         }
 
         case INMEDIATO:
@@ -47,7 +60,7 @@ static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
         {
             int16_t offset = (op >> 8) & 0xFFFF;
             uint8_t registro = op & 0x1F;
-            uint16_t bytesAleer = sizeof(uint32_t); // 4 bytes a leer
+            uint16_t bytesAleer = ((uint8_t) op) >> 5;
             uint32_t direccionLogica = maquina->registros[registro] + offset; //direccion donde apunta el registro + el desplazamiento
 
             maquina->registros[MAR] = bytesAleer << 16;
@@ -65,14 +78,21 @@ static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
 
 static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
 { 
-    uint32_t tipo = op >> 24;
+    uint8_t tipo = op >> 24;
 
     switch (tipo)
     {
         case REGISTRO:
         {
-            uint8_t nroregistro = op & 0x1F;
-            maquina->registros[nroregistro] = valor;
+            uint8_t descriptor = (uint8_t) op;
+            uint8_t nroregistro = descriptor & 0x1F;
+            int desplazamiento;
+            uint32_t mascara = sectorRegistro(op, &desplazamiento);
+            
+            int32_t valorAnterior = maquina->registros[nroregistro];
+            
+            
+            maquina->registros[nroregistro] = (int32_t) (valorAnterior & ~mascara) | (valor << desplazamiento);
             break;
         }
 
@@ -80,7 +100,7 @@ static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
         {
             int16_t offset = (op >> 8) & 0xFFFF;
             uint8_t registro = op & 0x1F;
-            uint16_t bytesAescribir = sizeof(uint32_t); // 4 bytes a escribir
+            uint16_t bytesAescribir = ()
 
             uint32_t direccionLogica = maquina->registros[registro] + offset;
 
