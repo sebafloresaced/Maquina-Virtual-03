@@ -9,10 +9,10 @@ static uint32_t sectorRegistro(uint8_t opregistro, int *desplazamiento){
     switch (sector) 
     {
     case 0: *desplazamiento = 0; return 0xFFFFFFFF; //EAX
-    case 1: *desplazamiento = 24; return 0xFF000000; //AL
-    case 2: *desplazamiento = 16; return 0x00FF0000; //AH
+    case 1: *desplazamiento = 0; return 0x000000FF; //AL
+    case 2: *desplazamiento = 8; return 0x0000FF00; //AH
     case 3: *desplazamiento = 0; return 0x0000FFFF; //AX
-    default: return 0xFFFFFFFF;
+    default: *desplazamiento = 0 ; return 0xFFFFFFFF;
     }   
 }
 
