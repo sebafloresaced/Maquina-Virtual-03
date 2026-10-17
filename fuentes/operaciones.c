@@ -81,7 +81,15 @@ static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
 
             leerMemoria(maquina);
 
-            return maquina->registros[MBR];
+            uint32_t valor = (uint32_t)maquina->registros[MBR];
+
+            if (bytesAleer == 1)
+                return (uint32_t)(int32_t)(int8_t)valor;
+            
+            if (bytesAleer == 2)
+                return (uint32_t)(int32_t)(int16_t)valor;
+            
+            return valor;
         }
 
         default:
