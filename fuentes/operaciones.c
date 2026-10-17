@@ -17,7 +17,6 @@ static void verificaUnderflow(MaquinaVirtual *maquina, uint32_t bytesAAcceder) {
 }
 
 static void verificaOverflow(MaquinaVirtual *maquina, uint32_t bytesAAcceder) {
-    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
     uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
 
     if (offsetSP < bytesAAcceder) {
@@ -124,6 +123,16 @@ static void actualizarCC(MaquinaVirtual *maquina, uint64_t resultado64, int32_t 
         maquina->registros[CC] &= ~0x10000000;
     }
 
+}
+
+static uint32_t obtenerDestinoSalto(MaquinaVirtual *maquina, Operando operando) {
+    uint32_t destino = obtenerValor(maquina, operando);
+
+    if ((operando >> 24) == INMEDIATO)
+        destino = ((uint32_t)maquina->registros[CS] & 0xFFFF0000) |
+                  (destino & 0xFFFF);
+
+    return destino;
 }
 
 // OP1 = Operando A
@@ -387,14 +396,14 @@ void operacionSYS(MaquinaVirtual *maquina)
 
 void operacionJMP(MaquinaVirtual *maquina)
 {
-    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+    uint32_t valor = obtenerDestinoSalto(maquina, maquina->registros[OP1]);
 
     maquina->registros[IP] = valor;
 }
 
 void operacionJP(MaquinaVirtual *maquina)
 {
-    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+    uint32_t valor = obtenerDestinoSalto(maquina, maquina->registros[OP1]);
 
     if (!(maquina->registros[CC] & 0xC0000000)) // si el bit N == 0 y el bit Z == 0
         maquina->registros[IP] = valor;
@@ -402,7 +411,7 @@ void operacionJP(MaquinaVirtual *maquina)
 
 void operacionJN(MaquinaVirtual *maquina)
 {
-    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+    uint32_t valor = obtenerDestinoSalto(maquina, maquina->registros[OP1]);
 
     if (maquina->registros[CC] & 0x80000000) // si el bit N == 1 
         maquina->registros[IP] = valor;
@@ -410,7 +419,7 @@ void operacionJN(MaquinaVirtual *maquina)
 
 void operacionJZ(MaquinaVirtual *maquina)
 {
-    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+    uint32_t valor = obtenerDestinoSalto(maquina, maquina->registros[OP1]);
 
     if (maquina->registros[CC] & 0x40000000) // si el bit Z == 1 
         maquina->registros[IP] = valor;
@@ -418,7 +427,7 @@ void operacionJZ(MaquinaVirtual *maquina)
 
 void operacionJC(MaquinaVirtual *maquina)
 {
-    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+    uint32_t valor = obtenerDestinoSalto(maquina, maquina->registros[OP1]);
 
     if (maquina->registros[CC] & 0x20000000) // si el bit C == 1 
         maquina->registros[IP] = valor;
@@ -426,7 +435,7 @@ void operacionJC(MaquinaVirtual *maquina)
 
 void operacionJV(MaquinaVirtual *maquina)
 {
-    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+    uint32_t valor = obtenerDestinoSalto(maquina, maquina->registros[OP1]);
 
     if (maquina->registros[CC] & 0x10000000) // si el bit V == 1 
         maquina->registros[IP] = valor;
@@ -434,7 +443,7 @@ void operacionJV(MaquinaVirtual *maquina)
 
 void operacionJNP(MaquinaVirtual *maquina)
 {
-    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+    uint32_t valor = obtenerDestinoSalto(maquina, maquina->registros[OP1]);
 
     if (maquina->registros[CC] & 0xC0000000) // si el bit N == 1 o el bit Z == 1
         maquina->registros[IP] = valor;
@@ -442,7 +451,7 @@ void operacionJNP(MaquinaVirtual *maquina)
 
 void operacionJNN(MaquinaVirtual *maquina)
 {
-    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+    uint32_t valor = obtenerDestinoSalto(maquina, maquina->registros[OP1]);
 
     if (!(maquina->registros[CC] & 0x80000000)) // si el bit N == 0
         maquina->registros[IP] = valor;
@@ -450,7 +459,7 @@ void operacionJNN(MaquinaVirtual *maquina)
 
 void operacionJNZ(MaquinaVirtual *maquina)
 {
-    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+    uint32_t valor = obtenerDestinoSalto(maquina, maquina->registros[OP1]);
 
     if (!(maquina->registros[CC] & 0x40000000)) // si el bit Z == 0
         maquina->registros[IP] = valor;
@@ -468,7 +477,6 @@ void operacionNOT(MaquinaVirtual *maquina)
 
 void operacionPUSH(MaquinaVirtual *maquina)
 {
-    
     verificaOverflow(maquina, 4); // Verifico que haya espacio en la pila para guardar el valor
 
     maquina->registros[SP] -= 4;
@@ -508,7 +516,7 @@ void operacionCALL(MaquinaVirtual *maquina)
     escribirMemoria(maquina);
 
     // Salto a la dirección de destino
-    uint32_t valor = obtenerValor(maquina, maquina->registros[OP1]);
+    uint32_t valor = obtenerDestinoSalto(maquina, maquina->registros[OP1]);
     maquina->registros[IP] = (uint32_t)maquina->registros[CS] + (valor & 0xFFFF); // consultar si el traductor da solo el offset o da la direccion logica completa
 }
 

@@ -115,7 +115,6 @@ static void obtieneOperando(Operando OP, st15 nombre) {
 }
 
 void desensamblador(MaquinaVirtual maquina) {
-    
     uint32_t indiceCS = (uint32_t)maquina.registros[CS] >> 16;
     uint32_t inicio = maquina.segmentos[indiceCS].base;
     uint32_t fin = inicio + maquina.segmentos[indiceCS].tamanio;
