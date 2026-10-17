@@ -82,9 +82,9 @@ static void obtieneOperando(Operando OP, st15 nombre) {
                     st15 cadaux;
                     cadaux[0] = registro[1]; //pone letra central al principio
                     switch (sector){
-                        case 2: strcat(cadaux,"L"); break;
-                        case 3: strcat(cadaux,"H"); break;
-                        case 4: strcat(cadaux,"X"); break;
+                        case 1: strcat(cadaux,"L"); break;
+                        case 2: strcat(cadaux,"H"); break;
+                        case 3: strcat(cadaux,"X"); break;
                         default: break;
                     }
 
@@ -113,7 +113,7 @@ static void obtieneOperando(Operando OP, st15 nombre) {
                     case 1: strcpy(nombreoperando, "b"); break;
                     case 2: strcpy(nombreoperando, "w"); break;
                     case 4: strcpy(nombreoperando, "l"); break;
-                    default: break;
+                    default: strcpy(nombreoperando, "OPERANDO INVALIDO"); return;
                 }
 
                 strcat(nombreoperando, "[");
