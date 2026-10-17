@@ -34,6 +34,86 @@ static void leerEncabezado(FILE *archivo, uint32_t memoria, uint16_t *tamanioCS,
     }
 }
 
+static void cargarParamSegment(MaquinaVirtual *maquina, const char *nombrePrograma, int cantidadParametros, char *parametros[], uint32_t *cantidadArgumentos, uint32_t *direccionArgv) {
+    maquina->registros[PS] = -1;
+    *cantidadArgumentos = 0;
+    *direccionArgv = UINT32_MAX;
+
+    if (cantidadParametros == 0)
+        return;
+
+    // Incluye el nombre del programa como argumento 0.
+    size_t cantidad = (size_t)cantidadParametros + 1;
+
+    size_t bytesPunteros = cantidad * 4;
+    size_t bytesStrings = 0;
+
+    // Calcula el espacio necesario incluyendo cada '\0'.
+    for (size_t i = 0; i < cantidad; i++) {
+        const char *texto = (i == 0) ? nombrePrograma : parametros[i - 1];
+        size_t longitud = strlen(texto);
+        if (longitud >= UINT16_MAX - bytesPunteros - bytesStrings) {
+            fprintf(stderr, "Error: Param Segment demasiado grande\n");
+            exit(EXIT_FAILURE);
+        }
+        bytesStrings += longitud + 1;
+    }
+
+    size_t tamanioPS = bytesStrings + bytesPunteros;
+
+    // PS siempre es el primer segmento cuando existe.
+    maquina->segmentos[0].base = 0;
+    maquina->segmentos[0].tamanio = (uint16_t)tamanioPS;
+    maquina->registros[PS] = 0;
+
+    uint32_t offsetString = 0;
+    uint32_t offsetArgv = (uint32_t)bytesStrings;
+
+    for (size_t i = 0; i < cantidad; i++) {
+        const char *texto = (i == 0) ? nombrePrograma : parametros[i - 1];
+        size_t longitud = strlen(texto) + 1;
+
+        memcpy(maquina->memoria + offsetString, texto, longitud); // copia una cantidad de bytes de un lugar de memoria a otro
+
+        // Direccion logica: segmento 0 + offset del string.
+        uint32_t puntero = offsetString;
+        uint32_t posicion = offsetArgv + (uint32_t)i * 4;
+
+        // Guarda el puntero en big endian.
+        maquina->memoria[posicion] = (uint8_t)(puntero >> 24);
+        maquina->memoria[posicion + 1] = (uint8_t)(puntero >> 16);
+        maquina->memoria[posicion + 2] = (uint8_t)(puntero >> 8);
+        maquina->memoria[posicion + 3] = (uint8_t)puntero;
+
+        offsetString += (uint32_t)longitud;
+    }
+
+    *cantidadArgumentos = (uint32_t)cantidad;
+    *direccionArgv = offsetArgv;
+}
+
+static void inicializarPila(MaquinaVirtual *maquina, uint32_t cantidadArgumentos, uint32_t direccionArgv)
+{
+    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
+
+    if (indiceSS >= CANT_SEGMENTOS || maquina->segmentos[indiceSS].tamanio < 12) {
+        printf("Error: pila insuficiente para iniciar el programa\n");
+        exit(EXIT_FAILURE);
+    }
+
+    uint32_t valores[3] = { direccionArgv, cantidadArgumentos, -1 }; // argv, argc, return
+
+    for (int i = 0; i < 3; i++) {
+        maquina->registros[SP] -= 4;
+
+        maquina->registros[LAR] = maquina->registros[SP];
+        maquina->registros[MAR] = 4 << 16;
+        maquina->registros[MBR] = (int32_t)valores[i];
+
+        escribirMemoria(maquina);
+    }
+}
+
 void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t *version, int cantidadParametros, char *parametros[]) {
   FILE *archivo;
   uint16_t tamanioCS = 0, tamanioDS = 0, tamanioES = 0, tamanioSS = 0, tamanioKS = 0, offset_entry = 0; 
@@ -51,8 +131,7 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t 
   uint32_t direccionArgv = UINT32_MAX;
 
   if (*version == 2) {
-    cargarParamSegment(maquina, nombreArchivo, cantidadParametros, parametros, &cantidadArgumentos, &direccionArgv);\
-    inicializarPila(maquina, cantidadArgumentos, direccionArgv);
+    cargarParamSegment(maquina, nombreArchivo, cantidadParametros, parametros, &cantidadArgumentos, &direccionArgv);
   }
 
   // ------ CONFIGURA SEGMENTOS Y REGISTROS ---------
@@ -150,6 +229,10 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t 
 
   maquina->registros[IP] = maquina->registros[CS] | offset_entry; // el puntero de instruccion apunta al entry point del programa
 
+  if (*version == 2) {
+    inicializarPila(maquina, cantidadArgumentos, direccionArgv);
+  }
+
   fclose(archivo);
 }
 
@@ -185,84 +268,4 @@ void leeArgumentos(int argc, char *argv[], const char **rutaArchivoVmx, const ch
                             *rutaArchivoVmi = argv[i];
     }
 
-}
-
-static void cargarParamSegment(MaquinaVirtual *maquina, const char *nombrePrograma, int cantidadParametros, char *parametros[], uint32_t *cantidadArgumentos, uint32_t *direccionArgv) {
-    maquina->registros[PS] = -1;
-    *cantidadArgumentos = 0;
-    *direccionArgv = UINT32_MAX;
-
-    if (cantidadParametros == 0)
-        return;
-
-    // Incluye el nombre del programa como argumento 0.
-    size_t cantidad = (size_t)cantidadParametros + 1;
-
-    size_t bytesPunteros = cantidad * 4;
-    size_t bytesStrings = 0;
-
-    // Calcula el espacio necesario incluyendo cada '\0'.
-    for (size_t i = 0; i < cantidad; i++) {
-        const char *texto = (i == 0) ? nombrePrograma : parametros[i - 1];
-        size_t longitud = strlen(texto);
-        if (longitud >= UINT16_MAX - bytesPunteros - bytesStrings) {
-            fprintf(stderr, "Error: Param Segment demasiado grande\n");
-            exit(EXIT_FAILURE);
-        }
-        bytesStrings += longitud + 1;
-    }
-
-    size_t tamanioPS = bytesStrings + bytesPunteros;
-
-    // PS siempre es el primer segmento cuando existe.
-    maquina->segmentos[0].base = 0;
-    maquina->segmentos[0].tamanio = (uint16_t)tamanioPS;
-    maquina->registros[PS] = 0;
-
-    uint32_t offsetString = 0;
-    uint32_t offsetArgv = (uint32_t)bytesStrings;
-
-    for (size_t i = 0; i < cantidad; i++) {
-        const char *texto = (i == 0) ? nombrePrograma : parametros[i - 1];
-        size_t longitud = strlen(texto) + 1;
-
-        memcpy(maquina->memoria + offsetString, texto, longitud); // copia una cantidad de bytes de un lugar de memoria a otro
-
-        // Direccion logica: segmento 0 + offset del string.
-        uint32_t puntero = offsetString;
-        uint32_t posicion = offsetArgv + (uint32_t)i * 4;
-
-        // Guarda el puntero en big endian.
-        maquina->memoria[posicion] = (uint8_t)(puntero >> 24);
-        maquina->memoria[posicion + 1] = (uint8_t)(puntero >> 16);
-        maquina->memoria[posicion + 2] = (uint8_t)(puntero >> 8);
-        maquina->memoria[posicion + 3] = (uint8_t)puntero;
-
-        offsetString += (uint32_t)longitud;
-    }
-
-    *cantidadArgumentos = (uint32_t)cantidad;
-    *direccionArgv = offsetArgv;
-}
-
-static void inicializarPila(MaquinaVirtual *maquina, uint32_t cantidadArgumentos, uint32_t direccionArgv)
-{
-    uint32_t indiceSS = (uint32_t)maquina->registros[SS] >> 16;
-
-    if (indiceSS >= CANT_SEGMENTOS || maquina->segmentos[indiceSS].tamanio < 12) {
-        printf("Error: pila insuficiente para iniciar el programa\n");
-        exit(EXIT_FAILURE);
-    }
-
-    uint32_t valores[3] = { direccionArgv, cantidadArgumentos, -1 }; // argv, argc, return
-
-    for (int i = 0; i < 3; i++) {
-        maquina->registros[SP] -= 4;
-
-        maquina->registros[LAR] = maquina->registros[SP];
-        maquina->registros[MAR] = 4 << 16;
-        maquina->registros[MBR] = (int32_t)valores[i];
-
-        escribirMemoria(maquina);
-    }
 }

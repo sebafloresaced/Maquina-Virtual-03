@@ -114,7 +114,7 @@ static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
             uint32_t valorAnterior = (uint32_t)maquina->registros[nroregistro];
 
             // Borra solamente la parte que vamos a reemplazar.
-            uint32_t conservado = anterior & ~mascara;
+            uint32_t conservado = valorAnterior & ~mascara;
             // Coloca el valor en su posicion y recorta los bits sobrantes.
             uint32_t nuevo = ((uint32_t)valor << desplazamiento) & mascara;
             
