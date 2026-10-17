@@ -74,6 +74,24 @@ static void obtieneOperando(Operando OP, st15 nombre) {
             case REGISTRO:
                 st15 registro;
                 nombreRegistro(OP & 0x1F, registro);
+
+                uint8_t descriptor = OP;
+                int sector = descriptor >> 5;
+
+                if (sector != 0){
+                    st15 cadaux;
+                    cadaux[0] = registro[1]; //pone letra central al principio
+                    switch (sector){
+                        case 1: strcat(cadaux,"L"); break;
+                        case 2: strcat(cadaux,"H"); break;
+                        case 3: strcat(cadaux,"X"); break;
+                        default: break;
+                    }
+
+                    strcat(cadaux,"\0");                  
+                    strcpy(registro, cadaux);
+                }
+
                 strcpy(nombreoperando, registro);
 
                 break;
@@ -88,7 +106,17 @@ static void obtieneOperando(Operando OP, st15 nombre) {
                 break;
 
             case MEMORIA:
-                strcpy(nombreoperando, "[");
+
+                int cantBytes = ((uint8_t) OP) >> 5;
+
+                switch (cantBytes){
+                    case 1: strcpy(nombreoperando, "b"); break;
+                    case 2: strcpy(nombreoperando, "w"); break;
+                    case 4: strcpy(nombreoperando, "l"); break;
+                    default: strcpy(nombreoperando, "OPERANDO INVALIDO"); return;
+                }
+
+                strcat(nombreoperando, "[");
 
                 st15 registroMemoria;
                 nombreRegistro(OP & 0x1F, registroMemoria);

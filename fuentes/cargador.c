@@ -26,7 +26,7 @@ static void leerEncabezado(FILE *archivo, uint32_t memoria, uint16_t *tamanioCS,
     *offset_entry = leer16(archivo);
   }
   else
-    if (*version == 1) 
+    if (*version == 1)
       *tamanioDS = memoria - *tamanioCS;
     else {
       printf("Error: Version invalida");
@@ -123,7 +123,17 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t 
 
   // Cargo el segmento de código en memoria
   uint32_t indiceCS = (uint32_t)maquina->registros[CS] >> 16;
-  fread(maquina->memoria + maquina->segmentos[indiceCS].base, 1, tamanioCS, archivo);
+  if (indiceCS >= CANT_SEGMENTOS || maquina->segmentos[indiceCS].base < 0) {
+    fprintf(stderr, "Error: descriptor de segmento de codigo invalido\n");
+    fclose(archivo);
+    exit(EXIT_FAILURE);
+  }
+
+  if (fread(maquina->memoria + maquina->segmentos[indiceCS].base, 1, tamanioCS, archivo) != tamanioCS) {
+    fprintf(stderr, "Error: no se pudo leer el segmento de codigo completo\n");
+    fclose(archivo);
+    exit(EXIT_FAILURE);
+  }
 
   // Cargo el segmento de constantes en memoria
   if (tamanioKS > 0) {
@@ -208,7 +218,7 @@ void cargarParamSegment(MaquinaVirtual *maquina, const char *nombrePrograma, int
     for (size_t i = 0; i < cantidad; i++) {
         const char *texto = (i == 0) ? nombrePrograma : parametros[i - 1];
         size_t longitud = strlen(texto) + 1;
-        
+
         memcpy(maquina->memoria + offsetString, texto, longitud); // copia una cantidad de bytes de un lugar de memoria a otro
 
         // Direccion logica: segmento 0 + offset del string.
@@ -237,7 +247,7 @@ void inicializarPila(MaquinaVirtual *maquina, uint32_t cantidadArgumentos, uint3
         exit(EXIT_FAILURE);
     }
 
-    uint32_t valores[3] = { direccionArgv, cantidadArgumentos, -1 }; // argv, argc, return 
+    uint32_t valores[3] = { direccionArgv, cantidadArgumentos, -1 }; // argv, argc, return
 
     for (int i = 0; i < 3; i++) {
         maquina->registros[SP] -= 4;
