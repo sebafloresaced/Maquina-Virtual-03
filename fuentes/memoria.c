@@ -23,8 +23,8 @@ void verificaDirFisica(MaquinaVirtual *maquina, uint32_t direccionFisica, uint16
     segmento = direccionLogica >> 16;
     
     if (segmento >= CANT_SEGMENTOS ||
-        maquina->segmentos[segmento].base == UINT32_MAX ||
-        maquina->segmentos[segmento].tamanio == UINT32_MAX)
+        maquina->segmentos[segmento].base == -1 ||
+        maquina->segmentos[segmento].tamanio == 0)
        {
         printf("Error: Fallo de segmento (acceso a segmento de memoria invalido)");
         exit(EXIT_FAILURE);
