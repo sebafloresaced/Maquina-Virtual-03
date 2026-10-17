@@ -13,7 +13,8 @@ int main(int argc, char *argv[]) {
     MaquinaVirtual maquina;
     int disassemblerFlag = 0;
     int paramSegmentFlag = 0;
-    int inicioParametros = -1;
+    int inicioParametros = argc;
+    uint8_t version;
 
     const char *rutaArchivoVmx;
     const char *rutaArchivoVmi;
@@ -27,11 +28,17 @@ int main(int argc, char *argv[]) {
     
     inicializarMaquina(&maquina);
 
-   /* if (paramSegmentFlag)
-        cargarParamSegment(argc,argv, &maquina);*/
+    uint32_t cantidadArgumentos = 0;
+    uint32_t direccionArgv = UINT32_MAX;
 
-    if (rutaArchivoVmx != NULL)
-        cargarPrograma(rutaArchivoVmx, &maquina);
+    if (rutaArchivoVmx != NULL) {
+        cargarParamSegment(&maquina, rutaArchivoVmx, cantidadParametros, argv + inicioParametros, &cantidadArgumentos, &direccionArgv);
+        cargarPrograma(rutaArchivoVmx, &maquina, &version);
+
+        if (version == 2) {
+            inicializarPila(&maquina, cantidadArgumentos, direccionArgv);
+        }
+    }
     /*else 
         if (rutaArchivoVmi != NULL)
             cargarImagen(rutaArchivoVmi, &maquina);
