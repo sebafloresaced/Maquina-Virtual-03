@@ -12,6 +12,7 @@ static uint32_t sectorRegistro(uint8_t opregistro, int *desplazamiento){
     case 1: *desplazamiento = 24; return 0xFF000000; //AL
     case 2: *desplazamiento = 16; return 0x00FF0000; //AH
     case 3: *desplazamiento = 0; return 0x0000FFFF; //AX
+    default: return 0xFFFFFFFF;
     }   
 }
 
@@ -43,7 +44,7 @@ static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
     {
         case REGISTRO:
         {
-            uint8_t descriptor = (uint8_t) op;
+            uint8_t descriptor = op;
             uint8_t nroregistro = descriptor & 0x1F;
             int desplazamiento;
             uint32_t mascara = sectorRegistro(op, &desplazamiento);
@@ -84,7 +85,7 @@ static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
     {
         case REGISTRO:
         {
-            uint8_t descriptor = (uint8_t) op;
+            uint8_t descriptor = op;
             uint8_t nroregistro = descriptor & 0x1F;
             int desplazamiento;
             uint32_t mascara = sectorRegistro(op, &desplazamiento);
@@ -100,7 +101,7 @@ static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
         {
             int16_t offset = (op >> 8) & 0xFFFF;
             uint8_t registro = op & 0x1F;
-            uint16_t bytesAescribir = ()
+            uint16_t bytesAescribir = ((uint8_t) op) >> 5;
 
             uint32_t direccionLogica = maquina->registros[registro] + offset;
 
