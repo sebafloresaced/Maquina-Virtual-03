@@ -21,7 +21,7 @@ static void verificaUnderflow(MaquinaVirtual *maquina, uint32_t bytesAAcceder) {
     uint32_t tamanioSS = maquina->segmentos[indiceSS].tamanio;
     uint32_t offsetSP = (uint32_t)maquina->registros[SP] & 0xFFFF;
 
-    if (tamanioSS - offsetSP < bytesAAcceder) {
+    if (offsetSP > tamanioSS || tamanioSS - offsetSP < bytesAAcceder) {
         printf("Error: STACK UNDERFLOW\n");
         exit(EXIT_FAILURE);
     }
@@ -44,11 +44,23 @@ static uint32_t obtenerValor(MaquinaVirtual *maquina, Operando op)
     {
         case REGISTRO:
         {
-            uint8_t descriptor = op;
+            uint8_t descriptor = (uint8_t) op;
             uint8_t nroregistro = descriptor & 0x1F;
+            uint8_t sector = (descriptor >> 5) & 0x03;
+            
             int desplazamiento;
             uint32_t mascara = sectorRegistro(op, &desplazamiento);
-            return (maquina->registros[nroregistro] & mascara) >> desplazamiento;
+            
+            uint32_t valor = ((uint32_t)maquina->registros[nroregistro] & mascara) >> desplazamiento;
+
+            // AL o AH: interpreta los 8 bits con signo
+            if (sector == 1 || sector == 2)
+                return (uint32_t)(int32_t)(int8_t)valor;
+            // AX: interpretar los 16 bits con signo.
+            if (sector == 3)
+                return (uint32_t)(int32_t)(int16_t)valor;
+            // Registro completo.
+            return valor;
         }
 
         case INMEDIATO:
@@ -85,15 +97,20 @@ static void escribirValor(MaquinaVirtual *maquina, Operando op, int32_t valor)
     {
         case REGISTRO:
         {
-            uint8_t descriptor = op;
+            uint8_t descriptor = (uint8_t)op;
             uint8_t nroregistro = descriptor & 0x1F;
+            
             int desplazamiento;
             uint32_t mascara = sectorRegistro(op, &desplazamiento);
             
-            int32_t valorAnterior = maquina->registros[nroregistro];
+            uint32_t valorAnterior = (uint32_t)maquina->registros[nroregistro];
+
+            // Borra solamente la parte que vamos a reemplazar.
+            uint32_t conservado = anterior & ~mascara;
+            // Coloca el valor en su posicion y recorta los bits sobrantes.
+            uint32_t nuevo = ((uint32_t)valor << desplazamiento) & mascara;
             
-            
-            maquina->registros[nroregistro] = (int32_t) (valorAnterior & ~mascara) | (valor << desplazamiento);
+            maquina->registros[nroregistro] = (int32_t) (conservado | nuevo);
             break;
         }
 
