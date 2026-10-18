@@ -7,6 +7,7 @@
 #include "../cabeceras/maquina.h"
 #include "../cabeceras/cargador.h"
 #include "../cabeceras/desensamblador.h"
+#include "../cabeceras/imagen.h"
 
 int main(int argc, char *argv[]) {
 
@@ -32,10 +33,13 @@ int main(int argc, char *argv[]) {
     if (rutaArchivoVmx != NULL) {
         cargarPrograma(rutaArchivoVmx, &maquina, &version, cantidadParametros, argv + inicioParametros, &entry_point);
     }
-    /*else 
+    else 
         if (rutaArchivoVmi != NULL)
-            cargarImagen(rutaArchivoVmi, &maquina);
-        */
+            cargarImagen(rutaArchivoVmi, &maquina, &version);
+        else {
+            printf("Error: no se especifico un archivo .vmx o .vmi\n");
+            exit(EXIT_FAILURE);
+        }
 
     if (disassemblerFlag)
         desensamblador(maquina, version, entry_point);
