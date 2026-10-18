@@ -135,7 +135,7 @@ static void escribir32(FILE *archivo, uint32_t valor)
     escribirBytes(archivo, bytes, sizeof bytes);
 }
 
-void creaVmi(const char *rutaArchivo, const MaquinaVirtual *maquina)
+void crearImagen(const char *rutaArchivo, const MaquinaVirtual *maquina)
 {
     // La cabecera guarda el tamaño en KiB usando 2 bytes.
     if (maquina->tamanioMemoria == 0 ||

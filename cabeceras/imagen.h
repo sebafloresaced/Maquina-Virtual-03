@@ -4,6 +4,6 @@
 #include "../cabeceras/maquina.h"
 
 void cargarImagen(const char *rutaArchivo, MaquinaVirtual *maquina, uint8_t *version);
-void creaVmi(const char *rutaArchivo, const MaquinaVirtual *maquina);
+void crearImagen(const char *rutaArchivo, const MaquinaVirtual *maquina);
 
 #endif
