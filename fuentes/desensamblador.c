@@ -113,7 +113,7 @@ static void obtieneOperando(Operando OP, st15 nombre) {
                     case 1: strcpy(nombreoperando, "b"); break;
                     case 2: strcpy(nombreoperando, "w"); break;
                     case 4: strcpy(nombreoperando, "l"); break;
-                    default: strcpy(nombreoperando, "OPERANDO INVALIDO"); return;
+                    default: break;
                 }
 
                 strcat(nombreoperando, "[");
@@ -142,7 +142,60 @@ static void obtieneOperando(Operando OP, st15 nombre) {
         strcpy(nombre, nombreoperando);
 }
 
-void desensamblador(MaquinaVirtual maquina) {
+static void escribeStringsCtes(MaquinaVirtual maquina){
+    if (maquina.registros[PS] < 0) {
+        return; // No hay param segment.
+    }
+
+    uint32_t indicePS = (uint32_t)maquina.registros[PS] >> 16;
+
+    uint32_t base = (uint32_t)maquina.segmentos[indicePS].base;
+    uint32_t tamanio = maquina.segmentos[indicePS].tamanio;
+    uint32_t bytesCadena, bytesAMostrar, offset = 0;
+    int truncada;
+
+    while (offset < tamanio) {
+        uint32_t longitud = 0;
+ 
+        //calculo la longitud de la cadena
+        while (offset + longitud < tamanio &&
+               maquina.memoria[base + offset + longitud] != '\0') {
+            longitud++;
+        }
+
+        bytesCadena = longitud + 1;  // + '\0'
+        //si me pase de 7 bytes, la trunco a 6 bytes, si no imprimo los bytesCadena
+        truncada = bytesCadena > 7;
+        bytesAMostrar = (truncada)? 6 : bytesCadena;
+        
+        //Escribe memoria y bytes
+        printf("[%04X] ", (unsigned)(base + offset));
+
+        for (uint32_t i = 0; i < bytesAMostrar; i++) {
+            printf("%02X ", maquina.memoria[base + offset + i]);
+        }
+
+        if (truncada) {
+            printf(".. ");
+        } else {
+            for (uint32_t i = bytesAMostrar; i < 7; i++) {
+                printf("   ");
+            }
+        }
+        
+        //Escribe la cadena
+        printf("| \"");
+        for (uint32_t i = 0; i < longitud; i++) {
+            unsigned char c = maquina.memoria[base + offset + i];
+            putchar(isprint(c) ? c : '.');
+        }
+
+        printf("\"\n");
+        offset += bytesCadena;
+    }
+}
+
+void desensamblador(MaquinaVirtual maquina, int version, uint32_t entry_point) {
     uint32_t indiceCS = (uint32_t)maquina.registros[CS] >> 16;
     uint32_t inicio = maquina.segmentos[indiceCS].base;
     uint32_t fin = inicio + maquina.segmentos[indiceCS].tamanio;
@@ -154,10 +207,16 @@ void desensamblador(MaquinaVirtual maquina) {
 
     printf("Desensamblador activado:\n\n");
 
-    maquina.registros[IP] = maquina.registros[CS];
+    if (version==2)
+        escribeStringsCtes(maquina);
 
+    maquina.registros[IP] = maquina.registros[CS];
+    
     while (direccionFisica < fin) {
 
+        if (maquina.registros[IP] == entry_point)
+            printf(">"); //Flechita del entry point
+            
         instruccion = maquina.memoria[direccionFisica];
         desensamblaInstruccion(&maquina, instruccion, &desplazamiento);
 
@@ -170,7 +229,7 @@ void desensamblador(MaquinaVirtual maquina) {
 
         int tamanio = desplazamiento + 1;
 
-        printf("[%04X] ", (unsigned int)direccionFisica);
+        printf(" [%04X] ", (unsigned int)direccionFisica);
         for (int j = 0; j < tamanio; j++) {
             printf("%02X ", (unsigned int)maquina.memoria[direccionFisica + j]);
         }
