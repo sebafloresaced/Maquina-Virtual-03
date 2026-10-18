@@ -114,7 +114,7 @@ static void inicializarPila(MaquinaVirtual *maquina, uint32_t cantidadArgumentos
     }
 }
 
-void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t *version, int cantidadParametros, char *parametros[]) {
+void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t *version, int cantidadParametros, char *parametros[], uint32_t *entry_point) {
   FILE *archivo;
   uint16_t tamanioCS = 0, tamanioDS = 0, tamanioES = 0, tamanioSS = 0, tamanioKS = 0, offset_entry = 0; 
 
@@ -227,7 +227,8 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t 
     fread(maquina->memoria + maquina->segmentos[indiceKS].base, 1, tamanioKS, archivo);
   }
 
-  maquina->registros[IP] = maquina->registros[CS] | offset_entry; // el puntero de instruccion apunta al entry point del programa
+  *entry_point = maquina->registros[CS] | offset_entry;
+  maquina->registros[IP] = *entry_point; // el puntero de instruccion apunta al entry point del programa
 
   if (*version == 2) {
     inicializarPila(maquina, cantidadArgumentos, direccionArgv);

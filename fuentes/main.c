@@ -15,6 +15,7 @@ int main(int argc, char *argv[]) {
     int paramSegmentFlag = 0;
     int inicioParametros = argc;
     uint8_t version;
+    uint32_t entry_point = 0;
 
     const char *rutaArchivoVmx;
     const char *rutaArchivoVmi;
@@ -29,7 +30,7 @@ int main(int argc, char *argv[]) {
     inicializarMaquina(&maquina);
 
     if (rutaArchivoVmx != NULL) {
-        cargarPrograma(rutaArchivoVmx, &maquina, &version, cantidadParametros, argv + inicioParametros);
+        cargarPrograma(rutaArchivoVmx, &maquina, &version, cantidadParametros, argv + inicioParametros, &entry_point);
     }
     /*else 
         if (rutaArchivoVmi != NULL)
@@ -37,7 +38,7 @@ int main(int argc, char *argv[]) {
         */
 
     if (disassemblerFlag)
-        desensamblador(maquina);
+        desensamblador(maquina, version, entry_point);
 
     printf("\nIniciando ejecucion del programa:\n");
     cicloPrincipal(&maquina);
