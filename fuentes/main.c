@@ -13,7 +13,6 @@ int main(int argc, char *argv[]) {
 
     MaquinaVirtual maquina;
     int disassemblerFlag = 0;
-    int paramSegmentFlag = 0;
     int inicioParametros = argc;
     uint8_t version;
     uint32_t entry_point = 0;
@@ -23,7 +22,7 @@ int main(int argc, char *argv[]) {
 
     maquina.tamanioMemoria = TAM_MEMORIA_POR_DEFECTO;
 
-    leeArgumentos(argc, argv, &rutaArchivoVmx, &rutaArchivoVmi, &maquina.tamanioMemoria, &disassemblerFlag, &paramSegmentFlag, &inicioParametros);
+    leeArgumentos(argc, argv, &rutaArchivoVmx, &rutaArchivoVmi, &maquina.tamanioMemoria, &disassemblerFlag, &inicioParametros);
     int cantidadParametros = argc - inicioParametros;
 
     srand((unsigned int)time(NULL));
