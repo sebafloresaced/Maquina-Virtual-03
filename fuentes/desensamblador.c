@@ -37,6 +37,10 @@ static void nombreOperacion(uint8_t codigo, st15 nombre) {
         case LDL: strcpy(nombre, "LDL"); break;
         case LDH: strcpy(nombre, "LDH"); break;
         case RND: strcpy(nombre, "RND"); break;
+        case POP: strcpy(nombre, "POP"); break;
+        case PUSH: strcpy(nombre, "PUSH"); break;
+        case CALL: strcpy(nombre, "CALL"); break;
+        case RET: strcpy(nombre, "RET"); break;
         default:  strcpy(nombre, "");
     }
 }
@@ -60,6 +64,12 @@ static void nombreRegistro(uint8_t codigo, st15 nombre) {
         case CC:   strcpy(nombre, "CC"); break;
         case CS:   strcpy(nombre, "CS"); break;
         case DS:   strcpy(nombre, "DS"); break;
+        case ES:   strcpy(nombre, "ES"); break;
+        case SS:   strcpy(nombre, "SS"); break;
+        case PS:   strcpy(nombre, "PS"); break;
+        case KS:   strcpy(nombre, "KS"); break;
+        case SP:   strcpy(nombre, "SP"); break;
+        case BP:   strcpy(nombre, "BP"); break;
         default:   strcpy(nombre, "");
     }
 }
@@ -81,14 +91,14 @@ static void obtieneOperando(Operando OP, st15 nombre) {
                 if (sector != 0){
                     st15 cadaux;
                     cadaux[0] = registro[1]; //pone letra central al principio
+                    cadaux[1] = '\0';
                     switch (sector){
                         case 1: strcat(cadaux,"L"); break;
                         case 2: strcat(cadaux,"H"); break;
                         case 3: strcat(cadaux,"X"); break;
                         default: break;
                     }
-
-                    strcat(cadaux,"\0");                  
+               
                     strcpy(registro, cadaux);
                 }
 
@@ -143,14 +153,14 @@ static void obtieneOperando(Operando OP, st15 nombre) {
 }
 
 static void escribeStringsCtes(MaquinaVirtual maquina){
-    if (maquina.registros[PS] < 0) {
+    if (maquina.registros[KS] < 0) {
         return; // No hay param segment.
     }
 
-    uint32_t indicePS = (uint32_t)maquina.registros[PS] >> 16;
+    uint32_t indiceKS = (uint32_t)maquina.registros[KS] >> 16;
 
-    uint32_t base = (uint32_t)maquina.segmentos[indicePS].base;
-    uint32_t tamanio = maquina.segmentos[indicePS].tamanio;
+    uint32_t base = (uint32_t)maquina.segmentos[indiceKS].base;
+    uint32_t tamanio = maquina.segmentos[indiceKS].tamanio;
     uint32_t bytesCadena, bytesAMostrar, offset = 0;
     int truncada;
 
@@ -169,7 +179,7 @@ static void escribeStringsCtes(MaquinaVirtual maquina){
         bytesAMostrar = (truncada)? 6 : bytesCadena;
         
         //Escribe memoria y bytes
-        printf("[%04X] ", (unsigned)(base + offset));
+        printf("  [%04X] ", (unsigned)(base + offset));
 
         for (uint32_t i = 0; i < bytesAMostrar; i++) {
             printf("%02X ", maquina.memoria[base + offset + i]);
@@ -214,9 +224,11 @@ void desensamblador(MaquinaVirtual maquina, int version, uint32_t entry_point) {
     
     while (direccionFisica < fin) {
 
-        if (maquina.registros[IP] == entry_point)
+        if (maquina.registros[IP] == (int32_t)entry_point)
             printf(">"); //Flechita del entry point
-            
+        else
+            printf(" ");
+        
         instruccion = maquina.memoria[direccionFisica];
         desensamblaInstruccion(&maquina, instruccion, &desplazamiento);
 

@@ -244,7 +244,7 @@ static int terminaEn(const char *texto, const char *extension) {
            strcmp(texto + longitud - longitudExtension, extension) == 0;
 }
 
-void leeArgumentos(int argc, char *argv[], const char **rutaArchivoVmx, const char **rutaArchivoVmi, uint32_t *memoria, int *disassemblerFlag, int *paramSegmentFlag, int *inicioParametros) {
+void leeArgumentos(int argc, char *argv[], const char **rutaArchivoVmx, const char **rutaArchivoVmi, uint32_t *memoria, int *disassemblerFlag, int *inicioParametros) {
     *rutaArchivoVmx = NULL;
     *rutaArchivoVmi = NULL;
 
@@ -257,7 +257,6 @@ void leeArgumentos(int argc, char *argv[], const char **rutaArchivoVmx, const ch
             
             else 
                 if (*rutaArchivoVmx != NULL && strcmp(argv[i], "-p") == 0) {
-                    *paramSegmentFlag = 1;
                     *inicioParametros = i + 1; 
                     break;
                 }
