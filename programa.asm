@@ -1,14 +1,16 @@
-\\DATA 100
+\\DATA 64
+\\EXTRA 0
+\\STACK 128
 
-TEXTO1 EQU "VMX"
+MENSAJE EQU "Ingrese un texto: "
 
-main: MOV AX, 4
-MOV BL, 5 
-ADD AX, EBX
-MOV l[DS], AX
-MOV EDX,DS
-LDL ECX,1
-LDH ECX,4
-MOV EAX, 1
-SYS 2
-STOP
+main: SYS 0
+    MOV EDX, KS
+    ADD EDX, MENSAJE
+    SYS 4
+
+    MOV EDX, DS
+    MOV ECX, 3
+    SYS 3
+    SYS 4
+    STOP

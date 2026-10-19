@@ -2,6 +2,7 @@
 #include "../cabeceras/operaciones.h"
 #include "../cabeceras/instrucciones.h"
 #include "../cabeceras/memoria.h"
+#include "../cabeceras/llamadas_sistema.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -19,7 +20,7 @@ void inicializarMaquina(MaquinaVirtual *maquina) {
         maquina->registros[i] = 0;
     }
     for (i = 0; i < CANT_SEGMENTOS; i++) {
-        maquina->segmentos[i].base = -1;
+        maquina->segmentos[i].base = 0;
         maquina->segmentos[i].tamanio = 0;
     }
     for (i = 0; i < CANT_OPERACIONES; i++) {
@@ -100,6 +101,6 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
 
     }
 
-    printf("Fin de la ejecución\n");
+    printf("\nFin de la ejecución");
 
 }

@@ -53,13 +53,18 @@ static void cargarParamSegment(MaquinaVirtual *maquina, const char *nombreProgra
         const char *texto = (i == 0) ? nombrePrograma : parametros[i - 1];
         size_t longitud = strlen(texto);
         if (longitud >= UINT16_MAX - bytesPunteros - bytesStrings) {
-            fprintf(stderr, "Error: Param Segment demasiado grande\n");
+            printf("Error: Param Segment demasiado grande\n");
             exit(EXIT_FAILURE);
         }
         bytesStrings += longitud + 1;
     }
 
     size_t tamanioPS = bytesStrings + bytesPunteros;
+
+    if (tamanioPS > maquina->tamanioMemoria) {
+        printf("Error: memoria insuficiente para parametros\n");
+        exit(EXIT_FAILURE);
+    }
 
     // PS siempre es el primer segmento cuando existe.
     maquina->segmentos[0].base = 0;
@@ -209,14 +214,14 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t 
 
   // Cargo el segmento de código en memoria
   uint32_t indiceCS = (uint32_t)maquina->registros[CS] >> 16;
-  if (indiceCS >= CANT_SEGMENTOS || maquina->segmentos[indiceCS].base < 0) {
-    fprintf(stderr, "Error: descriptor de segmento de codigo invalido\n");
+  if (indiceCS >= CANT_SEGMENTOS || maquina->segmentos[indiceCS].tamanio == 0) {
+    printf("Error: descriptor de segmento de codigo invalido\n");
     fclose(archivo);
     exit(EXIT_FAILURE);
   }
 
   if (fread(maquina->memoria + maquina->segmentos[indiceCS].base, 1, tamanioCS, archivo) != tamanioCS) {
-    fprintf(stderr, "Error: no se pudo leer el segmento de codigo completo\n");
+    printf("Error: no se pudo leer el segmento de codigo completo\n");
     fclose(archivo);
     exit(EXIT_FAILURE);
   }

@@ -23,9 +23,9 @@
 
 void leerDatos(MaquinaVirtual *maquina);
 void escribirDatos(MaquinaVirtual *maquina);
-
-// funcion para limpiar pantalla
-// funciones para leer y escribir datos en la memoria de la máquina virtual
-// funcion para breakpoint, que detiene la ejecución de la máquina virtual y permite inspeccionar su estado
+void limpiarPantalla(void);
+void leerString(MaquinaVirtual *maquina);
+void escribirString(MaquinaVirtual *maquina);
+void breakpoint(MaquinaVirtual *maquina);
 
 #endif

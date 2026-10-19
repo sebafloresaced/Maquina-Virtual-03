@@ -6,8 +6,15 @@
 uint32_t calculaDirFisica(MaquinaVirtual *maquina, uint32_t direccionLogica)
 {
     uint32_t segmento = direccionLogica >> 16;
-    uint32_t base = maquina->segmentos[segmento].base;
     uint32_t offset = direccionLogica & 0xFFFF;
+
+    // valido antes de acceder al descriptor.
+    if (segmento >= CANT_SEGMENTOS || maquina->segmentos[segmento].tamanio == 0) {
+        printf("Error: segmento invalido\n");
+        exit(EXIT_FAILURE);
+    }
+
+    uint32_t base = maquina->segmentos[segmento].base;
 
     return base+offset;
 }
@@ -22,9 +29,7 @@ void verificaDirFisica(MaquinaVirtual *maquina, uint32_t direccionFisica, uint16
 
     segmento = direccionLogica >> 16;
     
-    if (segmento >= CANT_SEGMENTOS ||
-        maquina->segmentos[segmento].base == -1 ||
-        maquina->segmentos[segmento].tamanio == 0)
+    if (segmento >= CANT_SEGMENTOS || maquina->segmentos[segmento].tamanio == 0)
        {
         printf("Error: Fallo de segmento (acceso a segmento de memoria invalido)");
         exit(EXIT_FAILURE);
