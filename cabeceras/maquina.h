@@ -50,6 +50,9 @@ struct MaquinaVirtual {
     int32_t registros[CANT_REGISTROS];
     DescriptorSegmento segmentos[CANT_SEGMENTOS];
     Operacion Operaciones[CANT_OPERACIONES];
+    const char *rutaImagen;
+    int pasoAPaso;
+    int detenerEjecucion;
 };
 
 void inicializarMaquina(MaquinaVirtual *maquina);

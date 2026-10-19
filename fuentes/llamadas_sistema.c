@@ -213,8 +213,40 @@ void leerString(MaquinaVirtual *maquina)
 
 void limpiarPantalla(void)
 {
-    printf("\033[2J\033[H");
-    // \033[2J borra la pantalla
-    // \033[H mueve el cursor a la posicion 0,0
+    printf("\033[H\033[2J\033[3J");
     fflush(stdout);
+}
+
+void breakpoint(MaquinaVirtual *maquina)
+{
+    if (maquina->rutaImagen == NULL)
+        return;
+
+    crearImagen(maquina->rutaImagen, maquina);
+
+    while (1) { // ciclo infinito
+        fflush(stdout);
+        int opcion = getchar();
+        if (opcion != '\n' && opcion != EOF) {
+            int resto;
+            while ((resto = getchar()) != '\n' && resto != EOF) { // consume lo que queda de la linea
+                // no hace nada
+            }
+        }
+
+        if (opcion == '\n') {
+            maquina->pasoAPaso = 1;
+            return;
+        }
+
+        if (opcion == 'g') {
+            maquina->pasoAPaso = 0;
+            return;
+        }
+
+        if (opcion == 'q' || opcion == EOF) {
+            maquina->detenerEjecucion = 1;
+            return;
+        }
+    }
 }

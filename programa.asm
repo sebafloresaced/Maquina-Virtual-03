@@ -1,16 +1,20 @@
-\\DATA 64
+\\DATA 4
 \\EXTRA 0
-\\STACK 128
+\\STACK 64
 
-MENSAJE EQU "Ingrese un texto: "
+main: MOV EAX, 10
+    SYS 15
 
-main: SYS 0
-    MOV EDX, KS
-    ADD EDX, MENSAJE
-    SYS 4
+    ADD EAX, 5
+    MUL EAX, 2
+    SYS 15
 
+    SYS 0
+
+    MOV l[DS], EAX
     MOV EDX, DS
-    MOV ECX, 3
-    SYS 3
-    SYS 4
+    LDL ECX, 1
+    LDH ECX, 4
+    MOV EAX, 1
+    SYS 2
     STOP

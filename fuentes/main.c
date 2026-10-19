@@ -29,6 +29,10 @@ int main(int argc, char *argv[]) {
     
     inicializarMaquina(&maquina);
 
+    maquina.rutaImagen = rutaArchivoVmi;
+    maquina.pasoAPaso = 0;
+    maquina.detenerEjecucion = 0;
+
     if (rutaArchivoVmx != NULL) {
         cargarPrograma(rutaArchivoVmx, &maquina, &version, cantidadParametros, argv + inicioParametros, &entry_point);
     }
@@ -43,7 +47,7 @@ int main(int argc, char *argv[]) {
     if (disassemblerFlag)
         desensamblador(maquina, version, entry_point);
 
-    printf("\nIniciando ejecucion del programa:\n");
+    printf("Iniciando ejecucion del programa:\n");
     cicloPrincipal(&maquina);
 
     free(maquina.memoria);

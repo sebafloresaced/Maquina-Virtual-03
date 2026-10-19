@@ -432,7 +432,8 @@ void operacionSYS(MaquinaVirtual *maquina)
             escribirString(maquina);
             break;
         case BREAKPOINT:
-            // breakpoint(maquina);
+            if (maquina->rutaImagen != NULL)
+                maquina->pasoAPaso = 1;
             break;
         default:
             // printf("Error: llamada al sistema desconocida");

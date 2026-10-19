@@ -69,6 +69,7 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
     int desplazamiento;
     uint32_t direccionFisica;
     uint8_t instruccion;
+
     // IP esta inicializado en cargador.c
     
     uint32_t indiceCS = (uint32_t)maquina->registros[CS] >> 16;
@@ -92,8 +93,11 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
 
         maquina->Operaciones[maquina->registros[OPC]](maquina);
 
+        if (maquina->pasoAPaso)
+            breakpoint(maquina);
+
         // STOP o RET de main pueden dejar IP en -1.
-        if (maquina->registros[IP] == -1) {
+        if (maquina->detenerEjecucion || maquina->registros[IP] == -1) {
             break;
         }
 
@@ -101,6 +105,6 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
 
     }
 
-    printf("\nFin de la ejecución");
+    printf("\nFin de la ejecución\n");
 
 }
