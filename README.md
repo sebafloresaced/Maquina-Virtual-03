@@ -9,8 +9,9 @@ Maquina-Virtual-03/
 │   ├── memoria.h
 │   ├── instrucciones.h
 │   ├── operaciones.h
-│   └── llamadas_sistema.h
-│   └── desensamblador.h
+│   ├── llamadas_sistema.h
+│   ├── desensamblador.h
+|   └── imagen.h
 ├── fuentes/
 │   ├── main.c
 │   ├── maquina.c
@@ -18,7 +19,8 @@ Maquina-Virtual-03/
 │   ├── memoria.c
 │   ├── instrucciones.c
 │   ├── operaciones.c
-│   └── llamadas_sistema.c
+│   ├── llamadas_sistema.c
+|   ├── imagen.c
 │   └── desensamblador.c
 └── README.md
 ```
