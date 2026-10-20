@@ -423,16 +423,17 @@ void operacionSYS(MaquinaVirtual *maquina)
             escribirDatos(maquina);
             break;
         case CLEAR:
-
+            limpiarPantalla();
             break;
         case STRING_READ:
-
+            leerString(maquina);
             break;
         case STRING_WRITE:
-        
+            escribirString(maquina);
             break;
         case BREAKPOINT:
-
+            if (maquina->rutaImagen != NULL)
+                maquina->pasoAPaso = 1;
             break;
         default:
             // printf("Error: llamada al sistema desconocida");

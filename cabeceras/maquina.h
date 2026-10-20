@@ -36,7 +36,7 @@
 #define PS 31
 
 typedef struct {
-    int16_t base; // para poder setearlo en -1 si no existe el segmento
+    uint16_t base; 
     uint16_t tamanio; // si no existe el segmento, su tamaño es 0
 } DescriptorSegmento;
 
@@ -50,6 +50,9 @@ struct MaquinaVirtual {
     int32_t registros[CANT_REGISTROS];
     DescriptorSegmento segmentos[CANT_SEGMENTOS];
     Operacion Operaciones[CANT_OPERACIONES];
+    const char *rutaImagen;
+    int pasoAPaso;
+    int detenerEjecucion;
 };
 
 void inicializarMaquina(MaquinaVirtual *maquina);
