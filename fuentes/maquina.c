@@ -76,9 +76,10 @@ void cicloPrincipal(MaquinaVirtual *maquina) {
     uint32_t base = maquina->segmentos[indiceCS].base;
     uint32_t limiteCS = maquina->segmentos[indiceCS].tamanio + base;
 
-    direccionFisica = calculaDirFisica(maquina, maquina->registros[IP]);
+    if (maquina->registros[IP] != -1)
+        direccionFisica = calculaDirFisica(maquina, maquina->registros[IP]);
 
-    while (maquina->registros[IP] != -1 && direccionFisica < limiteCS) {
+    while (maquina->registros[IP] != -1 && direccionFisica >= base && direccionFisica < limiteCS) {
 
         instruccion = maquina->memoria[direccionFisica];
         

@@ -18,9 +18,9 @@ static uint32_t leer32(FILE *archivo)
     }
 
     return ((uint32_t)bytes[0] << 24) |
-           ((uint32_t)bytes[1] << 16) |
-           ((uint32_t)bytes[2] << 8)  |
-           (uint32_t)bytes[3];
+            ((uint32_t)bytes[1] << 16) |
+            ((uint32_t)bytes[2] << 8)  |
+            (uint32_t)bytes[3];
 }
 
 static uint16_t leer16(FILE *archivo)
@@ -62,7 +62,7 @@ void cargarImagen(const char *rutaArchivo, MaquinaVirtual *maquina, uint8_t *ver
     }
 
     *version = cabecera[5];
-    if (*version != 1 && *version != 2) {
+    if (*version != 1) {
         printf("Error: version VMI no soportada\n");
         fclose(archivo);
         exit(EXIT_FAILURE);
@@ -91,6 +91,11 @@ void cargarImagen(const char *rutaArchivo, MaquinaVirtual *maquina, uint8_t *ver
 
     // Leer la memoria 
     uint8_t *memoria = malloc(tamanioMemoria);
+    if (memoria == NULL) {
+        printf("Error: no se pudo reservar memoria para la VMI\n");
+        fclose(archivo);
+        exit(EXIT_FAILURE);
+    }
 
     if (fread(memoria, 1, tamanioMemoria, archivo) != tamanioMemoria) {
         printf("Error: memoria incompleta en la VMI\n");

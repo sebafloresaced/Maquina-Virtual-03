@@ -98,7 +98,7 @@ static void obtieneOperando(Operando OP, st15 nombre) {
                         case 3: strcat(cadaux,"X"); break;
                         default: break;
                     }
-               
+                
                     strcpy(registro, cadaux);
                 }
 
@@ -166,10 +166,9 @@ static void escribeStringsCtes(MaquinaVirtual maquina){
 
     while (offset < tamanio) {
         uint32_t longitud = 0;
- 
+
         //calculo la longitud de la cadena
-        while (offset + longitud < tamanio &&
-               maquina.memoria[base + offset + longitud] != '\0') {
+        while (offset + longitud < tamanio && maquina.memoria[base + offset + longitud] != '\0') {
             longitud++;
         }
 
@@ -205,7 +204,7 @@ static void escribeStringsCtes(MaquinaVirtual maquina){
     }
 }
 
-void desensamblador(MaquinaVirtual maquina, int version, uint32_t entry_point) {
+void desensamblador(MaquinaVirtual maquina, uint32_t entry_point) {
     uint32_t indiceCS = (uint32_t)maquina.registros[CS] >> 16;
     uint32_t inicio = maquina.segmentos[indiceCS].base;
     uint32_t fin = inicio + maquina.segmentos[indiceCS].tamanio;
@@ -217,7 +216,7 @@ void desensamblador(MaquinaVirtual maquina, int version, uint32_t entry_point) {
 
     printf("Desensamblador activado:\n\n");
 
-    if (version==2)
+    if (maquina.registros[KS] != -1)
         escribeStringsCtes(maquina);
 
     maquina.registros[IP] = maquina.registros[CS];

@@ -69,7 +69,8 @@ void leerDatos(MaquinaVirtual *maquina)
     uint32_t direccionFisica;
     uint32_t formato = maquina->registros[EAX];
     uint32_t cantidad = maquina->registros[ECX] & 0xFFFF;
-
+    if (cantidad == 0)
+        return;
     switch (formato) {
         case DECIMAL: 
             for (unsigned int i = 0; i < cantidad; i++) {
@@ -143,6 +144,14 @@ void leerDatos(MaquinaVirtual *maquina)
                 escribirMemoria(maquina);
             }
             break;
+        default:
+            printf("Error: formato de lectura invalido\n");
+            exit(EXIT_FAILURE);
+    }
+
+    int caracterPendiente;
+    while ((caracterPendiente = getchar()) != '\n' && caracterPendiente != EOF) {
+        // Descarta el resto de la ultima linea leida.
     }
 }
 

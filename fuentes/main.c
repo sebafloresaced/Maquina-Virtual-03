@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
         }
 
     if (disassemblerFlag)
-        desensamblador(maquina, version, entry_point);
+        desensamblador(maquina, entry_point);
 
     printf("Iniciando ejecucion del programa:\n");
     cicloPrincipal(&maquina);

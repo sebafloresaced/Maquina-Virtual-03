@@ -150,6 +150,7 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t 
   uint32_t tamanioTotal = tamañoPS + tamanioKS + tamanioCS + tamanioDS + tamanioES + tamanioSS;
   if (tamanioTotal > maquina->tamanioMemoria) {
     printf("Error: Memoria insuficiente\n");
+    fclose(archivo);
     exit(EXIT_FAILURE);
   }
 
@@ -229,7 +230,11 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t 
   // Cargo el segmento de constantes en memoria
   if (tamanioKS > 0) {
     uint32_t indiceKS = (uint32_t)maquina->registros[KS] >> 16;
-    fread(maquina->memoria + maquina->segmentos[indiceKS].base, 1, tamanioKS, archivo);
+    if (fread(maquina->memoria + maquina->segmentos[indiceKS].base, 1, tamanioKS, archivo) != tamanioKS) {
+      printf("Error: segmento de constantes incompleto\n");
+      fclose(archivo);
+      exit(EXIT_FAILURE);
+    }
   }
 
   *entry_point = maquina->registros[CS] | offset_entry;
@@ -245,8 +250,7 @@ void cargarPrograma(const char *nombreArchivo, MaquinaVirtual *maquina, uint8_t 
 static int terminaEn(const char *texto, const char *extension) {
     size_t longitud = strlen(texto);
     size_t longitudExtension = strlen(extension);
-    return longitud >= longitudExtension &&
-           strcmp(texto + longitud - longitudExtension, extension) == 0;
+    return longitud >= longitudExtension && strcmp(texto + longitud - longitudExtension, extension) == 0;
 }
 
 void leeArgumentos(int argc, char *argv[], const char **rutaArchivoVmx, const char **rutaArchivoVmi, uint32_t *memoria, int *disassemblerFlag, int *inicioParametros) {
@@ -261,8 +265,10 @@ void leeArgumentos(int argc, char *argv[], const char **rutaArchivoVmx, const ch
                 *memoria = strtol(argv[i] + 2, NULL, 10) * 1024; //el parametro esta en KiB por eso se multiplica por 1024
             
             else 
-                if (*rutaArchivoVmx != NULL && strcmp(argv[i], "-p") == 0) {
-                    *inicioParametros = i + 1; 
+                if (strcmp(argv[i], "-p") == 0) {
+                    if (*rutaArchivoVmx != NULL) {
+                        *inicioParametros = i + 1;
+                    }
                     break;
                 }
                 else 

@@ -7,6 +7,6 @@
 typedef char st15[30];
 typedef char st7[7];
 
-void desensamblador(MaquinaVirtual maquina, int,uint32_t);
+void desensamblador(MaquinaVirtual maquina,uint32_t);
 
 #endif

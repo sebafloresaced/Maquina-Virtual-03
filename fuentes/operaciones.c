@@ -173,11 +173,7 @@ static void actualizarCC(MaquinaVirtual *maquina, uint64_t resultado64, int32_t 
 
 static uint32_t obtenerDestinoSalto(MaquinaVirtual *maquina, Operando operando) {
     uint32_t destino = obtenerValor(maquina, operando);
-
-    if ((operando >> 24) == INMEDIATO)
-        destino = ((uint32_t)maquina->registros[CS] & 0xFFFF0000) |
-                  (destino & 0xFFFF);
-
+    destino = ((uint32_t)maquina->registros[CS] & 0xFFFF0000) | (destino & 0xFFFF);
     return destino;
 }
 
@@ -436,8 +432,8 @@ void operacionSYS(MaquinaVirtual *maquina)
                 maquina->pasoAPaso = 1;
             break;
         default:
-            // printf("Error: llamada al sistema desconocida");
-            // exit(EXIT_FAILURE);
+            printf("Error: llamada al sistema desconocida");
+            exit(EXIT_FAILURE);
     }
 }
 
